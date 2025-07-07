@@ -8,7 +8,7 @@ const router = createBrowserRouter([
     {
         path: "/",
         Component: Main,
-        errorElement: Error,
+        errorElement: <Error />,
         children: [
             {
                 index: true,
