@@ -41,7 +41,7 @@ const Error = () => {
           
           <button 
             onClick={() => window.history.back()} 
-            className="inline-flex items-center justify-center px-6 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors duration-200 w-full"
+            className="inline-flex items-center justify-center px-6 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors duration-200 w-full cursor-pointer"
           >
             Go Back
           </button>
