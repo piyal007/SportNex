@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { PageSpinner } from './ui';
+import { ClipLoader } from 'react-spinners';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -9,8 +9,9 @@ const PrivateRoute = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <PageSpinner text="Loading..." />
+      <div className="fixed inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center z-50">
+        <ClipLoader size={40} color="#059669" />
+        <p className="mt-4 text-lg text-gray-600 font-medium animate-pulse">Loading...</p>
       </div>
     );
   }

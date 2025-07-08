@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../../components/ui/button';
-import { ButtonSpinner } from '../../components/ui';
+import { ClipLoader } from 'react-spinners';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useTitle from '../../hooks/useTitle';
@@ -140,7 +140,10 @@ const Login = () => {
               className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 text-sm md:text-base font-medium transition-colors"
             >
               {isLoading ? (
-                <ButtonSpinner text="Logging in..." />
+                <>
+                  <ClipLoader size={16} color="white" />
+                  <span className="ml-2">Logging in...</span>
+                </>
               ) : (
                 'Log In'
               )}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../../components/ui/button';
-import { ButtonSpinner } from '../../components/ui';
+import { ClipLoader } from 'react-spinners';
 import { Eye, EyeOff, Mail, Lock, User, Check, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useTitle from '../../hooks/useTitle';
@@ -305,7 +305,10 @@ const Register = () => {
               className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-sm md:text-base font-medium transition-colors"
             >
               {isLoading ? (
-                <ButtonSpinner text="Creating account..." />
+                <>
+                  <ClipLoader size={16} color="white" />
+                  <span className="ml-2">Creating account...</span>
+                </>
               ) : (
                 'Create Account'
               )}
