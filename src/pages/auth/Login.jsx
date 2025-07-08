@@ -5,8 +5,11 @@ import { Button } from '../../components/ui/button';
 import { ButtonSpinner } from '../../components/ui';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import useTitle from '../../hooks/useTitle';
 
 const Login = () => {
+  useTitle('Login');
+  
   const [formData, setFormData] = useState({
     email: '',
     password: ''

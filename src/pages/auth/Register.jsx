@@ -5,8 +5,11 @@ import { Button } from '../../components/ui/button';
 import { ButtonSpinner } from '../../components/ui';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 import toast from 'react-hot-toast';
+import useTitle from '../../hooks/useTitle';
 
 const Register = () => {
+  useTitle('Register');
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',

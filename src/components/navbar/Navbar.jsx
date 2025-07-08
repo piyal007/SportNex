@@ -76,13 +76,15 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-14 md:h-16">
           {/* Logo and Site Name */}
           <div className="flex items-center space-x-2 md:space-x-3">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg md:text-xl">SC</span>
-              </div>
+            <div className="flex-shrink-0 flex items-center">
+              <img 
+                src="https://i.postimg.cc/fbdm9xQ6/SportNex.png" 
+                alt="SportNex Logo" 
+                className="w-8 h-8 md:w-10 md:h-10 object-contain"
+              />
             </div>
-            <div className="text-lg md:text-xl font-bold text-gray-900">
-              Sports Club
+            <div className="text-lg md:text-xl font-bold text-emerald-600 flex items-center">
+              SportNex
             </div>
           </div>
 

@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import { LoadingSpinner, ButtonSpinner, PageSpinner, CardSpinner, InlineSpinner } from '../components/ui'
 import { Button } from '../components/ui/button'
+import useTitle from '../hooks/useTitle'
 
 const SpinnerDemo = () => {
+  useTitle('Spinner Demo');
+  
   const [showPageSpinner, setShowPageSpinner] = useState(false)
   const [buttonLoading, setButtonLoading] = useState(false)
 

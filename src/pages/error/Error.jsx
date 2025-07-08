@@ -1,9 +1,11 @@
 import React from 'react'
 import { useRouteError, Link } from 'react-router-dom'
 import { Home, AlertCircle } from 'lucide-react'
+import useTitle from '../../hooks/useTitle'
 
 const Error = () => {
   const error = useRouteError()
+  useTitle('Error')
   
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center px-4">
