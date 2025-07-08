@@ -2,7 +2,7 @@ import React from 'react'
 
 const LoadingSpinner = ({ 
   size = 'md', 
-  color = 'blue', 
+  color = 'emerald', 
   text = '', 
   className = '',
   fullScreen = false 
@@ -18,6 +18,7 @@ const LoadingSpinner = ({
   // Color variants
   const colorClasses = {
     blue: 'border-blue-600',
+    emerald: 'border-emerald-600',
     green: 'border-green-600',
     red: 'border-red-600',
     purple: 'border-purple-600',

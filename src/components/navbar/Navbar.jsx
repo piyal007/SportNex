@@ -14,7 +14,7 @@ const Navbar = () => {
   const navigate = useNavigate()
   
   // Default user image if none provided
-  const defaultUserImage = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+  const defaultUserImage = "https://i.postimg.cc/yxzXkbkL/avatar.jpg"
 
   const handleLogin = () => {
     navigate('/login')
@@ -96,8 +96,8 @@ const Navbar = () => {
                 className={({ isActive }) => 
                   `px-2 lg:px-3 py-2 text-sm font-medium transition-colors ${
                     isActive 
-                      ? 'text-blue-600 bg-blue-50 rounded-md' 
-                      : 'text-gray-900 hover:text-blue-600'
+                      ? 'text-emerald-600 bg-emerald-50 rounded-md'
+                  : 'text-gray-900 hover:text-emerald-600'
                   }`
                 }
               >
@@ -108,8 +108,8 @@ const Navbar = () => {
                  className={({ isActive }) => 
                    `px-2 lg:px-3 py-2 text-sm font-medium transition-colors ${
                      isActive 
-                       ? 'text-blue-600 bg-blue-50 rounded-md' 
-                       : 'text-gray-900 hover:text-blue-600'
+                       ? 'text-emerald-600 bg-emerald-50 rounded-md'
+                  : 'text-gray-900 hover:text-emerald-600'
                    }`
                  }
                >
@@ -125,14 +125,14 @@ const Navbar = () => {
                 <Button 
                   onClick={handleRegister} 
                   variant="outline"
-                  className="text-sm px-3 lg:px-4 border-blue-600 text-blue-600 hover:bg-blue-50"
+                  className="text-sm px-3 lg:px-4 border-emerald-600 text-emerald-600 hover:bg-emerald-50"
                 >
                   Register
                 </Button>
                 <Button 
                   onClick={handleLogin} 
                   disabled={loading}
-                  className="bg-blue-600 hover:bg-blue-700 text-sm px-3 lg:px-4 disabled:opacity-50"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-sm px-3 lg:px-4 disabled:opacity-50"
                 >
                   {loading ? (
                     <>
@@ -221,8 +221,8 @@ const Navbar = () => {
                 className={({ isActive }) => 
                   `block px-3 py-2 text-base font-medium transition-colors ${
                     isActive 
-                      ? 'text-blue-600 bg-blue-50 rounded-md' 
-                      : 'text-gray-900 hover:text-blue-600'
+                      ? 'text-emerald-600 bg-emerald-50 rounded-md'
+                      : 'text-gray-900 hover:text-emerald-600'
                   }`
                 }
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -234,26 +234,13 @@ const Navbar = () => {
                 className={({ isActive }) => 
                   `block px-3 py-2 text-base font-medium transition-colors ${
                     isActive 
-                      ? 'text-blue-600 bg-blue-50 rounded-md' 
-                      : 'text-gray-900 hover:text-blue-600'
+                      ? 'text-emerald-600 bg-emerald-50 rounded-md'
+                      : 'text-gray-900 hover:text-emerald-600'
                   }`
                 }
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Courts
-              </NavLink>
-              <NavLink 
-                to="/spinner-demo" 
-                className={({ isActive }) => 
-                  `block px-3 py-2 text-base font-medium transition-colors ${
-                    isActive 
-                      ? 'text-blue-600 bg-blue-50 rounded-md' 
-                      : 'text-gray-900 hover:text-blue-600'
-                  }`
-                }
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Spinners
               </NavLink>
             
             {/* Mobile Login/Profile Section */}
@@ -266,7 +253,7 @@ const Navbar = () => {
                       setIsMobileMenuOpen(false)
                     }} 
                     variant="outline"
-                    className="w-full border-blue-600 text-blue-600 hover:bg-blue-50"
+                    className="w-full border-emerald-600 text-emerald-600 hover:bg-emerald-50"
                   >
                     Register
                   </Button>
@@ -276,7 +263,7 @@ const Navbar = () => {
                       setIsMobileMenuOpen(false)
                     }} 
                     disabled={loading}
-                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50"
                   >
                     {loading ? (
                       <>
@@ -306,7 +293,7 @@ const Navbar = () => {
                   {/* Dashboard Link */}
                   <NavLink
                     to="/dashboard"
-                    className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 transition-colors"
+                    className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-emerald-600 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <Settings className="mr-3 h-5 w-5" />
