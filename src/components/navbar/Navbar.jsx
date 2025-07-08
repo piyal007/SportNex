@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
-import { ButtonSpinner } from '../ui'
 import { ChevronDown, User, Settings, LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import Swal from 'sweetalert2'
@@ -131,17 +130,9 @@ const Navbar = () => {
                 </Button>
                 <Button 
                   onClick={handleLogin} 
-                  disabled={loading}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-sm px-3 lg:px-4 disabled:opacity-50"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-sm px-3 lg:px-4"
                 >
-                  {loading ? (
-                    <>
-                      <ButtonSpinner className="mr-2" />
-                      Loading...
-                    </>
-                  ) : (
-                    'Login'
-                  )}
+                  Login
                 </Button>
               </>
             ) : (
@@ -262,17 +253,9 @@ const Navbar = () => {
                       handleLogin()
                       setIsMobileMenuOpen(false)
                     }} 
-                    disabled={loading}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50"
+                    className="w-full bg-emerald-600 hover:bg-emerald-700"
                   >
-                    {loading ? (
-                      <>
-                        <ButtonSpinner className="mr-2" />
-                        Loading...
-                      </>
-                    ) : (
-                      'Login'
-                    )}
+                    Login
                   </Button>
                 </div>
               ) : (

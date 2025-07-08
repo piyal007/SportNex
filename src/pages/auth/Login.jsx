@@ -44,7 +44,7 @@ const Login = () => {
       await login(formData.email, formData.password);
       navigate(from, { replace: true });
     } catch (error) {
-      console.error('Login error:', error);
+      // Error is already handled in AuthContext with user-friendly message
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +56,7 @@ const Login = () => {
       await loginWithGoogle();
       navigate(from, { replace: true });
     } catch (error) {
-      console.error('Google login error:', error);
+      // Error is already handled in AuthContext with user-friendly message
     } finally {
       setIsGoogleLoading(false);
     }
@@ -140,9 +140,9 @@ const Login = () => {
               className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 text-sm md:text-base font-medium transition-colors"
             >
               {isLoading ? (
-                <ButtonSpinner text="Signing in..." />
+                <ButtonSpinner text="Logging in..." />
               ) : (
-                'Sign In'
+                'Log In'
               )}
             </Button>
           </form>
@@ -165,10 +165,13 @@ const Login = () => {
             onClick={handleGoogleLogin}
             disabled={isGoogleLoading}
             variant="outline"
-            className="w-full border-gray-300 hover:bg-gray-50 py-3 text-sm md:text-base font-medium transition-colors bg-white text-gray-700 hover:shadow-md"
+            className="w-full py-3 text-sm md:text-base font-medium"
           >
             {isGoogleLoading ? (
-              <ButtonSpinner text="Signing in with Google..." />
+              <>
+                <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                <span>Signing in with Google...</span>
+              </>
             ) : (
               <>
                 <svg className="h-5 w-5 mr-3" viewBox="0 0 24 24">
@@ -190,7 +193,7 @@ const Login = () => {
                 to="/register"
                 className="font-medium text-emerald-600 hover:text-emerald-500 transition-colors"
               >
-                Sign up here
+                Register here
               </Link>
             </p>
           </div>

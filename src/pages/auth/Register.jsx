@@ -95,7 +95,7 @@ const Register = () => {
       await register(formData.email, formData.password, formData.name);
       navigate('/');
     } catch (error) {
-      console.error('Registration error:', error);
+      // Error is already handled in AuthContext with user-friendly message
     } finally {
       setIsLoading(false);
     }
@@ -107,7 +107,7 @@ const Register = () => {
       await loginWithGoogle();
       navigate('/');
     } catch (error) {
-      console.error('Google registration error:', error);
+      // Error is already handled in AuthContext with user-friendly message
     } finally {
       setIsGoogleLoading(false);
     }
@@ -330,10 +330,13 @@ const Register = () => {
             onClick={handleGoogleRegister}
             disabled={isGoogleLoading}
             variant="outline"
-            className="w-full border-gray-300 hover:bg-gray-50 py-3 text-sm md:text-base font-medium transition-colors bg-white text-gray-700 hover:shadow-md"
+            className="w-full py-3 text-sm md:text-base font-medium"
           >
             {isGoogleLoading ? (
-              <ButtonSpinner text="Signing up with Google..." />
+              <>
+                <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                <span>Signing up with Google...</span>
+              </>
             ) : (
               <>
                 <svg className="h-5 w-5 mr-3" viewBox="0 0 24 24">
@@ -355,7 +358,7 @@ const Register = () => {
                 to="/login"
                 className="font-medium text-green-600 hover:text-green-500 transition-colors"
               >
-                Sign in here
+                Login here
               </Link>
             </p>
           </div>

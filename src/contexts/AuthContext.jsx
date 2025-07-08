@@ -11,6 +11,7 @@ import {
 } from 'firebase/auth';
 import { app } from '../firebase/firebase.config';
 import toast from 'react-hot-toast';
+import { getErrorMessage } from '../utils/errorMessages';
 
 const AuthContext = createContext();
 
@@ -39,10 +40,11 @@ export const AuthProvider = ({ children }) => {
         displayName: name
       });
       
-      toast.success('Account created successfully!');
+      toast.success('Welcome to SportNex! Your account has been created successfully.');
       return result;
     } catch (error) {
-      toast.error(error.message);
+      const friendlyMessage = getErrorMessage(error);
+      toast.error(friendlyMessage);
       throw error;
     } finally {
       setLoading(false);
@@ -54,10 +56,11 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const result = await signInWithEmailAndPassword(auth, email, password);
-      toast.success('Logged in successfully!');
+      toast.success('Welcome back! You have been signed in successfully.');
       return result;
     } catch (error) {
-      toast.error(error.message);
+      const friendlyMessage = getErrorMessage(error);
+      toast.error(friendlyMessage);
       throw error;
     } finally {
       setLoading(false);
@@ -69,10 +72,11 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const result = await signInWithPopup(auth, googleProvider);
-      toast.success('Logged in with Google successfully!');
+      toast.success('Welcome! You have been signed in with Google successfully.');
       return result;
     } catch (error) {
-      toast.error(error.message);
+      const friendlyMessage = getErrorMessage(error);
+      toast.error(friendlyMessage);
       throw error;
     } finally {
       setLoading(false);
@@ -83,8 +87,10 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await signOut(auth);
+      toast.success('You have been signed out successfully.');
     } catch (error) {
-      toast.error(error.message);
+      const friendlyMessage = getErrorMessage(error);
+      toast.error(friendlyMessage);
       throw error;
     }
   };
