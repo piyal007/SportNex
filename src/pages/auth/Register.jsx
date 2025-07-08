@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../../components/ui/button';
 import { ButtonSpinner } from '../../components/ui';
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Check, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useTitle from '../../hooks/useTitle';
 
@@ -20,15 +20,41 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [passwordRequirements, setPasswordRequirements] = useState({
+    minLength: false,
+    hasUppercase: false,
+    hasLowercase: false,
+    hasNumber: false,
+    hasSpecialChar: false
+  });
+  const [showRequirements, setShowRequirements] = useState(false);
   
   const { register, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
+  const validatePasswordRequirements = (password) => {
+    return {
+      minLength: password.length >= 8,
+      hasUppercase: /[A-Z]/.test(password),
+      hasLowercase: /[a-z]/.test(password),
+      hasNumber: /\d/.test(password),
+      hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    };
+  };
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+
+    // Validate password requirements in real-time
+    if (name === 'password') {
+      const requirements = validatePasswordRequirements(value);
+      setPasswordRequirements(requirements);
+      setShowRequirements(value.length > 0);
+    }
   };
 
   const validateForm = () => {
@@ -42,8 +68,12 @@ const Register = () => {
       return false;
     }
     
-    if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters long');
+    // Check all password requirements
+    const requirements = validatePasswordRequirements(formData.password);
+    const allRequirementsMet = Object.values(requirements).every(req => req);
+    
+    if (!allRequirementsMet) {
+      toast.error('Password does not meet all requirements');
       return false;
     }
     
@@ -159,7 +189,7 @@ const Register = () => {
                   value={formData.password}
                   onChange={handleChange}
                   className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors text-sm md:text-base"
-                  placeholder="Create a password (min. 6 characters)"
+                  placeholder="Create a strong password"
                   required
                 />
                 <button
@@ -174,6 +204,65 @@ const Register = () => {
                   )}
                 </button>
               </div>
+              
+              {/* Password Requirements */}
+              {showRequirements && (
+                <div className="mt-3 space-y-2">
+                  <p className="text-sm font-medium text-gray-700">Password must contain:</p>
+                  <div className="space-y-1">
+                    <div className={`flex items-center text-sm ${
+                      passwordRequirements.minLength ? 'text-green-600' : 'text-red-500'
+                    }`}>
+                      {passwordRequirements.minLength ? (
+                        <Check className="h-4 w-4 mr-2" />
+                      ) : (
+                        <X className="h-4 w-4 mr-2" />
+                      )}
+                      At least 8 characters
+                    </div>
+                    <div className={`flex items-center text-sm ${
+                      passwordRequirements.hasUppercase ? 'text-green-600' : 'text-red-500'
+                    }`}>
+                      {passwordRequirements.hasUppercase ? (
+                        <Check className="h-4 w-4 mr-2" />
+                      ) : (
+                        <X className="h-4 w-4 mr-2" />
+                      )}
+                      One uppercase letter (A-Z)
+                    </div>
+                    <div className={`flex items-center text-sm ${
+                      passwordRequirements.hasLowercase ? 'text-green-600' : 'text-red-500'
+                    }`}>
+                      {passwordRequirements.hasLowercase ? (
+                        <Check className="h-4 w-4 mr-2" />
+                      ) : (
+                        <X className="h-4 w-4 mr-2" />
+                      )}
+                      One lowercase letter (a-z)
+                    </div>
+                    <div className={`flex items-center text-sm ${
+                      passwordRequirements.hasNumber ? 'text-green-600' : 'text-red-500'
+                    }`}>
+                      {passwordRequirements.hasNumber ? (
+                        <Check className="h-4 w-4 mr-2" />
+                      ) : (
+                        <X className="h-4 w-4 mr-2" />
+                      )}
+                      One number (0-9)
+                    </div>
+                    <div className={`flex items-center text-sm ${
+                      passwordRequirements.hasSpecialChar ? 'text-green-600' : 'text-red-500'
+                    }`}>
+                      {passwordRequirements.hasSpecialChar ? (
+                        <Check className="h-4 w-4 mr-2" />
+                      ) : (
+                        <X className="h-4 w-4 mr-2" />
+                      )}
+                      One special character (!@#$%^&*)
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Confirm Password Field */}
