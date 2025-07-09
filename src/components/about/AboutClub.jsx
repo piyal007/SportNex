@@ -4,7 +4,7 @@ import { Trophy, Users, Target, Calendar } from 'lucide-react'
 const AboutClub = () => {
   return (
     <section className="py-16 md:py-24 bg-background">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+      <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
