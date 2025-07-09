@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
 import { ChevronDown, User, Settings, LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
+import ThemeToggle from '../ThemeToggle'
 import Swal from 'sweetalert2'
 
 const Navbar = () => {
@@ -70,7 +71,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/50">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md shadow-sm border-b border-border/50">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 md:h-16">
           {/* Logo and Site Name */}
@@ -95,8 +96,8 @@ const Navbar = () => {
                 className={({ isActive }) => 
                   `px-2 lg:px-3 py-2 text-sm font-medium transition-colors ${
                     isActive 
-                      ? 'text-emerald-600 bg-emerald-50 rounded-md'
-                  : 'text-gray-900 hover:text-emerald-600'
+                      ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
+                  : 'text-foreground hover:text-emerald-600'
                   }`
                 }
               >
@@ -107,8 +108,8 @@ const Navbar = () => {
                  className={({ isActive }) => 
                    `px-2 lg:px-3 py-2 text-sm font-medium transition-colors ${
                      isActive 
-                       ? 'text-emerald-600 bg-emerald-50 rounded-md'
-                  : 'text-gray-900 hover:text-emerald-600'
+                       ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
+                  : 'text-foreground hover:text-emerald-600'
                    }`
                  }
                >
@@ -117,8 +118,9 @@ const Navbar = () => {
              </div>
            </div>
 
-          {/* Login/Profile Section - Hidden on mobile */}
+          {/* Theme Toggle and Login/Profile Section - Hidden on mobile */}
           <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
+            <ThemeToggle />
             {!user ? (
               <>
                 <Button 
@@ -130,7 +132,7 @@ const Navbar = () => {
                 </Button>
                 <Button 
                   onClick={handleLogin} 
-                  className="bg-emerald-600 hover:bg-emerald-700 text-sm px-3 lg:px-4"
+                  className="bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-800 text-sm px-3 lg:px-4"
                 >
                   Login
                 </Button>
@@ -140,7 +142,7 @@ const Navbar = () => {
                 {/* Profile Picture with Dropdown */}
                 <button
                   onClick={toggleDropdown}
-                  className="flex items-center space-x-1 lg:space-x-2 p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                  className="flex items-center space-x-1 lg:space-x-2 p-1 rounded-full hover:bg-accent transition-colors cursor-pointer"
                 >
                   <img
                     className="h-7 w-7 lg:h-8 lg:w-8 rounded-full object-cover"
@@ -152,18 +154,18 @@ const Navbar = () => {
 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 lg:w-56 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                  <div className="absolute right-0 mt-2 w-48 lg:w-56 bg-popover rounded-md shadow-lg ring-1 ring-border z-50">
                     <div className="py-1">
                       {/* User Info - Not Clickable */}
-                      <div className="px-3 lg:px-4 py-2 lg:py-3 border-b border-gray-100">
-                        <p className="text-xs lg:text-sm font-medium text-gray-900">{user?.displayName || 'User'}</p>
-                        <p className="text-xs lg:text-sm text-gray-500">{user?.email}</p>
+                      <div className="px-3 lg:px-4 py-2 lg:py-3 border-b border-border">
+                        <p className="text-xs lg:text-sm font-medium text-popover-foreground">{user?.displayName || 'User'}</p>
+                        <p className="text-xs lg:text-sm text-muted-foreground">{user?.email}</p>
                       </div>
                       
                       {/* Dashboard Link */}
                       <NavLink
                         to="/dashboard"
-                        className="flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        className="flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm text-popover-foreground hover:bg-accent transition-colors"
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         <Settings className="mr-2 lg:mr-3 h-3 w-3 lg:h-4 lg:w-4" />
@@ -173,7 +175,7 @@ const Navbar = () => {
                       {/* Logout Button */}
                       <button
                         onClick={handleLogout}
-                        className="flex items-center w-full px-3 lg:px-4 py-2 text-xs lg:text-sm text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
+                        className="flex items-center w-full px-3 lg:px-4 py-2 text-xs lg:text-sm text-popover-foreground hover:bg-accent transition-colors cursor-pointer"
                       >
                         <LogOut className="mr-2 lg:mr-3 h-3 w-3 lg:h-4 lg:w-4" />
                         Logout
@@ -185,11 +187,12 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile menu button - Only visible on mobile */}
-          <div className="md:hidden flex items-center">
+          {/* Mobile Theme Toggle and Menu button - Only visible on mobile */}
+          <div className="md:hidden flex items-center space-x-2">
+            <ThemeToggle />
             <button 
               onClick={toggleMobileMenu}
-              className="text-gray-500 hover:text-gray-700 p-2 rounded-md transition-colors cursor-pointer"
+              className="text-muted-foreground hover:text-foreground p-2 rounded-md transition-colors cursor-pointer"
               aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? (
@@ -204,16 +207,16 @@ const Navbar = () => {
 
       {/* Mobile Navigation Menu - Toggleable on mobile */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-200">
-          <div className="px-4 pt-2 pb-3 space-y-1 bg-gray-50">
+        <div className="md:hidden border-t border-border">
+          <div className="px-4 pt-2 pb-3 space-y-1 bg-background">
             {/* Navigation Links */}
             <NavLink 
                 to="/" 
                 className={({ isActive }) => 
                   `block px-3 py-2 text-base font-medium transition-colors ${
                     isActive 
-                      ? 'text-emerald-600 bg-emerald-50 rounded-md'
-                      : 'text-gray-900 hover:text-emerald-600'
+                      ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
+                      : 'text-foreground hover:text-emerald-600 hover:bg-accent'
                   }`
                 }
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -225,8 +228,8 @@ const Navbar = () => {
                 className={({ isActive }) => 
                   `block px-3 py-2 text-base font-medium transition-colors ${
                     isActive 
-                      ? 'text-emerald-600 bg-emerald-50 rounded-md'
-                      : 'text-gray-900 hover:text-emerald-600'
+                      ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
+                      : 'text-foreground hover:text-emerald-600 hover:bg-accent'
                   }`
                 }
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -235,7 +238,7 @@ const Navbar = () => {
               </NavLink>
             
             {/* Mobile Login/Profile Section */}
-            <div className="pt-2 border-t border-gray-200 mt-2">
+            <div className="pt-2 border-t border-border mt-2">
               {!user ? (
                 <div className="space-y-2">
                   <Button 
@@ -253,7 +256,7 @@ const Navbar = () => {
                       handleLogin()
                       setIsMobileMenuOpen(false)
                     }} 
-                    className="w-full bg-emerald-600 hover:bg-emerald-700"
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-800"
                   >
                     Login
                   </Button>
@@ -268,15 +271,15 @@ const Navbar = () => {
                       alt={user?.displayName || 'User'}
                     />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{user?.displayName || 'User'}</p>
-                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      <p className="text-sm font-medium text-foreground">{user?.displayName || 'User'}</p>
+                      <p className="text-xs text-muted-foreground">{user?.email}</p>
                     </div>
                   </div>
                   
                   {/* Dashboard Link */}
                   <NavLink
                     to="/dashboard"
-                    className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-emerald-600 transition-colors"
+                    className="flex items-center px-3 py-2 text-base font-medium text-foreground hover:text-emerald-600 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <Settings className="mr-3 h-5 w-5" />
@@ -289,7 +292,7 @@ const Navbar = () => {
                       handleLogout()
                       setIsMobileMenuOpen(false)
                     }}
-                    className="flex items-center w-full px-3 py-2 text-base font-medium text-gray-700 hover:text-red-600 transition-colors cursor-pointer"
+                    className="flex items-center w-full px-3 py-2 text-base font-medium text-foreground hover:text-red-600 transition-colors cursor-pointer"
                   >
                     <LogOut className="mr-3 h-5 w-5" />
                     Logout
