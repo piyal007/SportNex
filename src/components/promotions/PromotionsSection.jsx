@@ -117,13 +117,13 @@ const PromotionsSection = () => {
 
                   {/* Coupon Code Section */}
                   <div className="mb-3">
-                    <div className="bg-white/90 border-2 border-dashed border-gray-300 rounded-xl p-3 backdrop-blur-md shadow-sm">
+                    <div className=" border-2 border-dashed border-white rounded-xl p-3 backdrop-blur-md shadow-sm">
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                          <div className="text-xs font-semibold text-white uppercase tracking-wide mb-1">
                             Coupon Code
                           </div>
-                          <div className="font-mono font-bold text-base text-gray-900 tracking-wider">
+                          <div className="font-mono font-bold text-base text-white tracking-wider">
                             {promo.code}
                           </div>
                         </div>
