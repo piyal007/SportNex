@@ -5,6 +5,7 @@ import { ArrowRight, Calendar, Users, Trophy } from 'lucide-react'
 import FancyBanner from '../../components/banner/FancyBanner'
 import AboutClub from '../../components/about/AboutClub'
 import LocationSection from '../../components/location/LocationSection'
+import PromotionsSection from '../../components/promotions/PromotionsSection'
 
 const Home = () => {
   useTitle('Home')
@@ -23,6 +24,9 @@ const Home = () => {
 
         {/* Location Section */}
         <LocationSection />
+        
+        {/* Promotions Section */}
+        <PromotionsSection />
 
         {/* Features Section */}
        <section className="py-16 md:py-24 bg-muted/30">
