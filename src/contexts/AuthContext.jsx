@@ -9,9 +9,9 @@ import {
   GoogleAuthProvider,
   signInWithPopup
 } from 'firebase/auth';
-import { app } from '../firebase/firebase.config';
+import { app } from '@/firebase/firebase.config';
 import toast from 'react-hot-toast';
-import { getErrorMessage } from '../utils/errorMessages';
+import { getErrorMessage } from '@/utils/errorMessages';
 
 const AuthContext = createContext();
 

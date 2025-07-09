@@ -1,12 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import router from './routes/Routes.jsx';
+import router from '@/routes/Routes.jsx';
 import { RouterProvider } from "react-router";
-import { AuthProvider } from './contexts/AuthContext.jsx';
-import { ThemeProvider } from './contexts/ThemeContext.jsx';
+import { AuthProvider } from '@/contexts/AuthContext.jsx';
+import { ThemeProvider } from '@/contexts/ThemeContext.jsx';
 import { Toaster } from 'react-hot-toast';
-import GlobalLoader from './components/GlobalLoader.jsx';
+import GlobalLoader from '@/components/GlobalLoader.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

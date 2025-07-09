@@ -1,11 +1,11 @@
 import React from 'react'
-import useTitle from '../../hooks/useTitle'
-import { Button } from '../../components/ui/button'
+import useTitle from '@/hooks/useTitle'
+import { Button } from '@/components/ui/button'
 import { ArrowRight, Calendar, Users, Trophy } from 'lucide-react'
-import FancyBanner from '../../components/banner/FancyBanner'
-import AboutClub from '../../components/about/AboutClub'
-import LocationSection from '../../components/location/LocationSection'
-import PromotionsSection from '../../components/promotions/PromotionsSection'
+import FancyBanner from './components/FancyBanner'
+import AboutClub from './components/AboutClub'
+import LocationSection from './components/LocationSection'
+import PromotionsSection from './components/PromotionsSection'
 
 const Home = () => {
   useTitle('Home')

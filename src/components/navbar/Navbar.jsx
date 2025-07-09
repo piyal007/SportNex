@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { Button } from '../ui/button'
+import { Button } from '@/components/ui/button'
 import { ChevronDown, User, Settings, LogOut, Menu, X } from 'lucide-react'
-import { useAuth } from '../../contexts/AuthContext'
-import ThemeToggle from '../ThemeToggle'
+import { useAuth } from '@/contexts/AuthContext'
+import ThemeToggle from '@/components/ThemeToggle'
 import Swal from 'sweetalert2'
 
 const Navbar = () => {

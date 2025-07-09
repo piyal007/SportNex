@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/navbar/Navbar";
-import Footer from "../components/footer/Footer";
-import BackToTop from "../components/BackToTop";
+import Navbar from "@/components/navbar/Navbar";
+import Footer from "@/components/footer/Footer";
+import BackToTop from "@/components/BackToTop";
 const Main = () => {
     return (
         <div className="min-h-screen flex flex-col">

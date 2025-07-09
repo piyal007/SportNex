@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouteError, Link } from 'react-router-dom'
 import { Home, AlertCircle } from 'lucide-react'
-import useTitle from '../../hooks/useTitle'
+import useTitle from '@/hooks/useTitle'
 
 const Error = () => {
   const error = useRouteError()
