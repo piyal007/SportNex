@@ -8,10 +8,10 @@ const FancyBanner = () => {
   const bannerImages = [
     {
       id: 1,
-      title: 'Premium Sports Club',
-      subtitle: 'Experience excellence in every game',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      category: 'Club'
+      title: 'Elite Fitness Center',
+      subtitle: 'Transform your body, elevate your mind',
+      image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      category: 'Fitness'
     },
     {
       id: 2,
@@ -24,7 +24,7 @@ const FancyBanner = () => {
       id: 3,
       title: 'Exciting Activities',
       subtitle: 'Join tournaments and community events',
-      image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
       category: 'Activities'
     }
   ]
@@ -51,9 +51,9 @@ const FancyBanner = () => {
   }
 
   return (
-    <div className="relative h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden rounded-lg shadow-2xl">
+    <div className="relative h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden rounded-lg shadow-2xl">
       {/* Image Container */}
-      <div className="relative w-full h-full">
+      <div className="relative w-full h-full bg-gray-900">
         {bannerImages.map((slide, index) => (
           <div
             key={slide.id}
@@ -66,7 +66,14 @@ const FancyBanner = () => {
             <img
               src={slide.image}
               alt={slide.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
+              style={{
+                objectFit: 'cover',
+                objectPosition: index === 2 ? 'center top' : 'center center',
+                minHeight: '100%',
+                minWidth: '100%'
+              }}
+              loading={index === 0 ? 'eager' : 'lazy'}
             />
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
