@@ -2,75 +2,63 @@ import React from 'react'
 import useTitle from '../../hooks/useTitle'
 import { Button } from '../../components/ui/button'
 import { ArrowRight, Calendar, Users, Trophy } from 'lucide-react'
+import FancyBanner from '../../components/banner/FancyBanner'
+import AboutClub from '../../components/about/AboutClub'
 
 const Home = () => {
   useTitle('Home')
   
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Welcome to <span className="text-emerald-600">SportNex</span>
-            </h1>
-            <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Your premier destination for sports court bookings. Reserve your favorite courts, 
-              connect with fellow athletes, and elevate your game.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 text-lg">
-                Book a Court
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button variant="outline" className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 px-8 py-3 text-lg">
-                Learn More
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Fancy Banner Section */}
+       <section className="py-8 md:py-12">
+         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+           <FancyBanner />
+         </div>
+       </section>
 
-      {/* Features Section */}
-      <section className="py-16 md:py-24 bg-white">
+       {/* About the Club Section */}
+       <AboutClub />
+
+       {/* Features Section */}
+       <section className="py-16 md:py-24 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Why Choose SportNex?
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Experience the future of sports court booking with our innovative platform
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6 rounded-lg border border-emerald-100 hover:border-emerald-200 transition-colors">
-              <div className="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 rounded-lg border border-border hover:border-emerald-200 dark:hover:border-emerald-700 transition-colors bg-card">
+              <div className="bg-emerald-100 dark:bg-emerald-950 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Calendar className="h-8 w-8 text-emerald-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Easy Booking</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold text-foreground mb-2">Easy Booking</h3>
+              <p className="text-muted-foreground">
                 Book your favorite courts in just a few clicks. Simple, fast, and reliable.
               </p>
             </div>
             
-            <div className="text-center p-6 rounded-lg border border-emerald-100 hover:border-emerald-200 transition-colors">
-              <div className="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 rounded-lg border border-border hover:border-emerald-200 dark:hover:border-emerald-700 transition-colors bg-card">
+              <div className="bg-emerald-100 dark:bg-emerald-950 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="h-8 w-8 text-emerald-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Community</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold text-foreground mb-2">Community</h3>
+              <p className="text-muted-foreground">
                 Connect with fellow athletes and build lasting friendships through sports.
               </p>
             </div>
             
-            <div className="text-center p-6 rounded-lg border border-emerald-100 hover:border-emerald-200 transition-colors">
-              <div className="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 rounded-lg border border-border hover:border-emerald-200 dark:hover:border-emerald-700 transition-colors bg-card">
+              <div className="bg-emerald-100 dark:bg-emerald-950 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Trophy className="h-8 w-8 text-emerald-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Premium Courts</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold text-foreground mb-2">Premium Courts</h3>
+              <p className="text-muted-foreground">
                 Access to high-quality courts with professional-grade equipment and facilities.
               </p>
             </div>
@@ -87,7 +75,7 @@ const Home = () => {
           <p className="text-lg text-emerald-100 mb-8 max-w-2xl mx-auto">
             Join thousands of athletes who trust SportNex for their court booking needs.
           </p>
-          <Button className="bg-white text-emerald-600 hover:bg-gray-50 px-8 py-3 text-lg font-semibold">
+          <Button className="bg-white text-emerald-600 hover:bg-gray-50 dark:bg-gray-100 dark:hover:bg-gray-200 px-8 py-3 text-lg font-semibold cursor-pointer">
             Sign Up Today
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
