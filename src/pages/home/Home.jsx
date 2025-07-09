@@ -4,6 +4,7 @@ import { Button } from '../../components/ui/button'
 import { ArrowRight, Calendar, Users, Trophy } from 'lucide-react'
 import FancyBanner from '../../components/banner/FancyBanner'
 import AboutClub from '../../components/about/AboutClub'
+import LocationSection from '../../components/location/LocationSection'
 
 const Home = () => {
   useTitle('Home')
@@ -17,10 +18,13 @@ const Home = () => {
          </div>
        </section>
 
-       {/* About the Club Section */}
-       <AboutClub />
+       {/* About Club Section */}
+        <AboutClub />
 
-       {/* Features Section */}
+        {/* Location Section */}
+        <LocationSection />
+
+        {/* Features Section */}
        <section className="py-16 md:py-24 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <div className="text-center mb-16">
