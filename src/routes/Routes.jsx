@@ -9,6 +9,13 @@ import Dashboard from "@/pages/dashboard/Dashboard";
 import Profile from "@/pages/dashboard/Profile";
 import PendingBookings from "@/pages/dashboard/PendingBookings";
 import Announcements from "@/pages/dashboard/Announcements";
+import MemberDashboard from "@/pages/dashboard/MemberDashboard";
+import MemberProfile from "@/pages/dashboard/member/MemberProfile";
+import MemberPendingBookings from "@/pages/dashboard/member/PendingBookings";
+import ApprovedBookings from "@/pages/dashboard/member/ApprovedBookings";
+import ConfirmedBookings from "@/pages/dashboard/member/ConfirmedBookings";
+import PaymentHistory from "@/pages/dashboard/member/PaymentHistory";
+import MemberAnnouncements from "@/pages/dashboard/member/Announcements";
 import PrivateRoute from "@/components/PrivateRoute";
 
 
@@ -45,6 +52,20 @@ const router = createBrowserRouter([
           { path: "profile", element: <Profile /> },
           { path: "pending-bookings", element: <PendingBookings /> },
           { path: "announcements", element: <Announcements /> },
+        ]
+    },
+    {
+        path: "/member-dashboard",
+        element: <PrivateRoute><MemberDashboard /></PrivateRoute>,
+        errorElement: <Error />,
+        children: [
+          { index: true, element: <MemberProfile /> },
+          { path: "profile", element: <MemberProfile /> },
+          { path: "pending-bookings", element: <MemberPendingBookings /> },
+          { path: "approved-bookings", element: <ApprovedBookings /> },
+          { path: "confirmed-bookings", element: <ConfirmedBookings /> },
+          { path: "payment-history", element: <PaymentHistory /> },
+          { path: "announcements", element: <MemberAnnouncements /> },
         ]
     },
 ]);
