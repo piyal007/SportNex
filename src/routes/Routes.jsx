@@ -16,6 +16,18 @@ import ApprovedBookings from "@/pages/dashboard/member/ApprovedBookings";
 import ConfirmedBookings from "@/pages/dashboard/member/ConfirmedBookings";
 import PaymentHistory from "@/pages/dashboard/member/PaymentHistory";
 import MemberAnnouncements from "@/pages/dashboard/member/Announcements";
+
+// Admin Dashboard Components
+import AdminDashboard from "@/pages/dashboard/admin/AdminDashboard";
+import AdminProfile from "@/pages/dashboard/admin/AdminProfile";
+import ManageBookings from "@/pages/dashboard/admin/ManageBookings";
+import ManageMembers from "@/pages/dashboard/admin/ManageMembers";
+import AllUsers from "@/pages/dashboard/admin/AllUsers";
+import ManageCourts from "@/pages/dashboard/admin/ManageCourts";
+import AdminConfirmedBookings from "@/pages/dashboard/admin/ConfirmedBookings";
+import ManageCoupons from "@/pages/dashboard/admin/ManageCoupons";
+import AdminAnnouncements from "@/pages/dashboard/admin/Announcements";
+
 import PrivateRoute from "@/components/PrivateRoute";
 
 
@@ -66,6 +78,22 @@ const router = createBrowserRouter([
           { path: "confirmed-bookings", element: <ConfirmedBookings /> },
           { path: "payment-history", element: <PaymentHistory /> },
           { path: "announcements", element: <MemberAnnouncements /> },
+        ]
+    },
+    {
+        path: "/admin-dashboard",
+        element: <PrivateRoute><AdminDashboard /></PrivateRoute>,
+        errorElement: <Error />,
+        children: [
+          { index: true, element: <AdminProfile /> },
+          { path: "profile", element: <AdminProfile /> },
+          { path: "manage-bookings", element: <ManageBookings /> },
+          { path: "manage-members", element: <ManageMembers /> },
+          { path: "all-users", element: <AllUsers /> },
+          { path: "manage-courts", element: <ManageCourts /> },
+          { path: "confirmed-bookings", element: <AdminConfirmedBookings /> },
+          { path: "manage-coupons", element: <ManageCoupons /> },
+          { path: "announcements", element: <AdminAnnouncements /> },
         ]
     },
 ]);
