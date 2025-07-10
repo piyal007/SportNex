@@ -5,13 +5,18 @@ import Home from "@/pages/home/Home";
 import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 import Courts from "@/pages/courts/Courts";
+import Dashboard from "@/pages/dashboard/Dashboard";
+import Profile from "@/pages/dashboard/Profile";
+import PendingBookings from "@/pages/dashboard/PendingBookings";
+import Announcements from "@/pages/dashboard/Announcements";
+import PrivateRoute from "@/components/PrivateRoute";
 
 
 const router = createBrowserRouter([
     {
         path: "/",
         Component: Main,
-        errorElement: <Error />,
+        errorElement: <Error />, 
         children: [
             {
                 index: true,
@@ -31,7 +36,17 @@ const router = createBrowserRouter([
             },
         ]
     },
-    
+    {
+        path: "/dashboard",
+        element: <PrivateRoute><Dashboard /></PrivateRoute>,
+        errorElement: <Error />,
+        children: [
+          { index: true, element: <Profile /> },
+          { path: "profile", element: <Profile /> },
+          { path: "pending-bookings", element: <PendingBookings /> },
+          { path: "announcements", element: <Announcements /> },
+        ]
+    },
 ]);
 
 export default router;
