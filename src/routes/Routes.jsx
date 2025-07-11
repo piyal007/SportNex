@@ -29,6 +29,7 @@ import ManageCoupons from "@/pages/dashboard/admin/ManageCoupons";
 import AdminAnnouncements from "@/pages/dashboard/admin/Announcements";
 
 import PrivateRoute from "@/components/PrivateRoute";
+import PublicRoute from "@/components/PublicRoute";
 import { AdminRoute, MemberRoute, UserRoute } from "@/components/RoleBasedRoute";
 import RoleBasedRedirect from "@/components/RoleBasedRedirect";
 import AdminSetup from "@/components/AdminSetup";
@@ -46,11 +47,11 @@ const router = createBrowserRouter([
             },
             {
                 path: "/login",
-                Component: Login,
+                element: <PublicRoute><Login /></PublicRoute>,
             },
             {
                 path: "/register",
-                Component: Register,
+                element: <PublicRoute><Register /></PublicRoute>,
             },
             {
                 path: "/courts",
