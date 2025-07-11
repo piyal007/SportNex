@@ -19,187 +19,29 @@ const Courts = () => {
   const courtsPerPage = viewMode === 'card' ? 6 : 10;
 
   // Mock data - replace with actual API call
-  const mockCourts = [
-    {
-      id: 1,
-      name: 'Tennis Court A',
-      type: 'Tennis',
-      image: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=500&h=300&fit=crop',
-      pricePerSession: 50,
-      availableSlots: [
-        '09:00 AM - 10:00 AM',
-        '10:00 AM - 11:00 AM',
-        '02:00 PM - 03:00 PM',
-        '03:00 PM - 04:00 PM',
-        '05:00 PM - 06:00 PM'
-      ],
-      rating: 4.8,
-      capacity: 4,
-      location: 'Block A, Level 1'
-    },
-    {
-      id: 2,
-      name: 'Badminton Court B',
-      type: 'Badminton',
-      image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&h=300&fit=crop',
-      pricePerSession: 35,
-      availableSlots: [
-        '08:00 AM - 09:00 AM',
-        '09:00 AM - 10:00 AM',
-        '11:00 AM - 12:00 PM',
-        '01:00 PM - 02:00 PM',
-        '04:00 PM - 05:00 PM'
-      ],
-      rating: 4.6,
-      capacity: 4,
-      location: 'Block B, Level 2'
-    },
-    {
-      id: 3,
-      name: 'Squash Court C',
-      type: 'Squash',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop',
-      pricePerSession: 40,
-      availableSlots: [
-        '07:00 AM - 08:00 AM',
-        '10:00 AM - 11:00 AM',
-        '12:00 PM - 01:00 PM',
-        '03:00 PM - 04:00 PM',
-        '06:00 PM - 07:00 PM'
-      ],
-      rating: 4.7,
-      capacity: 2,
-      location: 'Block C, Level 1'
-    },
-    {
-      id: 4,
-      name: 'Basketball Court D',
-      type: 'Basketball',
-      image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=500&h=300&fit=crop',
-      pricePerSession: 60,
-      availableSlots: [
-        '08:00 AM - 10:00 AM',
-        '10:00 AM - 12:00 PM',
-        '02:00 PM - 04:00 PM',
-        '04:00 PM - 06:00 PM'
-      ],
-      rating: 4.9,
-      capacity: 10,
-      location: 'Block D, Ground Floor'
-    },
-    {
-      id: 5,
-      name: 'Volleyball Court E',
-      type: 'Volleyball',
-      image: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=500&h=300&fit=crop',
-      pricePerSession: 45,
-      availableSlots: [
-        '09:00 AM - 10:30 AM',
-        '11:00 AM - 12:30 PM',
-        '01:00 PM - 02:30 PM',
-        '03:00 PM - 04:30 PM',
-        '05:00 PM - 06:30 PM'
-      ],
-      rating: 4.5,
-      capacity: 12,
-      location: 'Block E, Level 1'
-    },
-    {
-      id: 6,
-      name: 'Table Tennis Room F',
-      type: 'Table Tennis',
-      image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=500&h=300&fit=crop',
-      pricePerSession: 25,
-      availableSlots: [
-        '08:00 AM - 09:00 AM',
-        '09:00 AM - 10:00 AM',
-        '10:00 AM - 11:00 AM',
-        '02:00 PM - 03:00 PM',
-        '03:00 PM - 04:00 PM',
-        '04:00 PM - 05:00 PM'
-      ],
-      rating: 4.4,
-      capacity: 4,
-      location: 'Block F, Level 2'
-    },
-    {
-      id: 7,
-      name: 'Tennis Court G',
-      type: 'Tennis',
-      image: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=500&h=300&fit=crop',
-      pricePerSession: 55,
-      availableSlots: [
-        '07:00 AM - 08:00 AM',
-        '08:00 AM - 09:00 AM',
-        '11:00 AM - 12:00 PM',
-        '01:00 PM - 02:00 PM',
-        '04:00 PM - 05:00 PM'
-      ],
-      rating: 4.8,
-      capacity: 4,
-      location: 'Block A, Level 2'
-    },
-    {
-      id: 8,
-      name: 'Badminton Court H',
-      type: 'Badminton',
-      image: 'https://images.unsplash.com/photo-1593786481097-4b4b3c7c4fb4?w=500&h=300&fit=crop',
-      pricePerSession: 38,
-      availableSlots: [
-        '06:00 AM - 07:00 AM',
-        '07:00 AM - 08:00 AM',
-        '12:00 PM - 01:00 PM',
-        '02:00 PM - 03:00 PM',
-        '05:00 PM - 06:00 PM'
-      ],
-      rating: 4.7,
-      capacity: 4,
-      location: 'Block B, Level 1'
-    },
-    {
-      id: 9,
-      name: 'Squash Court I',
-      type: 'Squash',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500&h=300&fit=crop',
-      pricePerSession: 42,
-      availableSlots: [
-        '08:00 AM - 09:00 AM',
-        '09:00 AM - 10:00 AM',
-        '01:00 PM - 02:00 PM',
-        '02:00 PM - 03:00 PM',
-        '06:00 PM - 07:00 PM'
-      ],
-      rating: 4.6,
-      capacity: 2,
-      location: 'Block C, Level 2'
-    },
-    {
-      id: 10,
-      name: 'Multi-Purpose Court J',
-      type: 'Multi-Purpose',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop',
-      pricePerSession: 65,
-      availableSlots: [
-        '09:00 AM - 11:00 AM',
-        '11:00 AM - 01:00 PM',
-        '02:00 PM - 04:00 PM',
-        '04:00 PM - 06:00 PM'
-      ],
-      rating: 4.9,
-      capacity: 20,
-      location: 'Block G, Ground Floor'
-    }
-  ];
+  
+  // API base URL
+  const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
   useEffect(() => {
-    // Simulate API call
     const fetchCourts = async () => {
       setLoading(true);
       try {
-        // Replace with actual API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setCourts(mockCourts);
+        const response = await fetch(`${API_BASE_URL}/courts`);
+        const result = await response.json();
+        
+        if (result.success) {
+          // Transform MongoDB data to match frontend expectations
+          const transformedCourts = result.data.map(court => ({
+            ...court,
+            id: court._id // Add id field for compatibility
+          }));
+          setCourts(transformedCourts);
+        } else {
+          throw new Error(result.error || 'Failed to fetch courts');
+        }
       } catch (error) {
+        console.error('Error fetching courts:', error);
         toast.error('Failed to load courts');
       } finally {
         setLoading(false);
@@ -238,14 +80,36 @@ const Courts = () => {
   const currentCourts = courts.slice(startIndex, endIndex);
 
   const renderStars = (rating) => {
-    return Array.from({ length: 5 }, (_, index) => (
-      <Star
-        key={index}
-        className={`w-4 h-4 ${
-          index < Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
-        }`}
-      />
-    ));
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        stars.push(
+          <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+        );
+      } else if (i === fullStars && hasHalfStar) {
+        stars.push(
+          <div key={i} className="relative w-4 h-4">
+            <Star className="w-4 h-4 text-gray-300 absolute" />
+            <div className="overflow-hidden w-1/2">
+              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+            </div>
+          </div>
+        );
+      } else {
+        stars.push(
+          <Star key={i} className="w-4 h-4 text-gray-300" />
+        );
+      }
+    }
+    
+    return (
+      <div className="flex items-center">
+        {stars}
+      </div>
+    );
   };
 
   const renderCardView = () => (
