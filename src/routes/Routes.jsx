@@ -29,6 +29,9 @@ import ManageCoupons from "@/pages/dashboard/admin/ManageCoupons";
 import AdminAnnouncements from "@/pages/dashboard/admin/Announcements";
 
 import PrivateRoute from "@/components/PrivateRoute";
+import { AdminRoute, MemberRoute, UserRoute } from "@/components/RoleBasedRoute";
+import RoleBasedRedirect from "@/components/RoleBasedRedirect";
+import AdminSetup from "@/components/AdminSetup";
 
 
 const router = createBrowserRouter([
@@ -53,11 +56,19 @@ const router = createBrowserRouter([
                 path: "/courts",
                 Component: Courts,
             },
+            {
+                path: "/redirect-dashboard",
+                element: <RoleBasedRedirect />,
+            },
+            {
+                path: "/admin-setup",
+                element: <AdminSetup />,
+            },
         ]
     },
     {
         path: "/dashboard",
-        element: <PrivateRoute><Dashboard /></PrivateRoute>,
+        element: <UserRoute><Dashboard /></UserRoute>,
         errorElement: <Error />,
         children: [
           { index: true, element: <Profile /> },
@@ -68,7 +79,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/member-dashboard",
-        element: <PrivateRoute><MemberDashboard /></PrivateRoute>,
+        element: <MemberRoute><MemberDashboard /></MemberRoute>,
         errorElement: <Error />,
         children: [
           { index: true, element: <MemberProfile /> },
@@ -82,7 +93,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/admin-dashboard",
-        element: <PrivateRoute><AdminDashboard /></PrivateRoute>,
+        element: <AdminRoute><AdminDashboard /></AdminRoute>,
         errorElement: <Error />,
         children: [
           { index: true, element: <AdminProfile /> },

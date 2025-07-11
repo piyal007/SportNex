@@ -93,7 +93,7 @@ const Register = () => {
     try {
       setIsLoading(true);
       await register(formData.email, formData.password, formData.name);
-      navigate('/');
+      navigate('/redirect-dashboard');
     } catch (error) {
       // Error is already handled in AuthContext with user-friendly message
     } finally {
@@ -105,7 +105,7 @@ const Register = () => {
     try {
       setIsGoogleLoading(true);
       await loginWithGoogle();
-      navigate('/');
+      navigate('/redirect-dashboard');
     } catch (error) {
       // Error is already handled in AuthContext with user-friendly message
     } finally {

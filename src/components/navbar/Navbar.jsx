@@ -4,13 +4,15 @@ import { Button } from '@/components/ui/button'
 import { ChevronDown, User, Settings, LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import ThemeToggle from '@/components/ThemeToggle'
+import useAdminSetupBanner from '@/hooks/useAdminSetupBanner'
 import Swal from 'sweetalert2'
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   
-  const { user, logout, loading } = useAuth()
+  const { user, logout, loading, userRole, isAdmin, isMemberOrAdmin } = useAuth()
+  const { isBannerVisible } = useAdminSetupBanner()
   const navigate = useNavigate()
   
   // Default user image if none provided
@@ -71,7 +73,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md shadow-sm border-b border-border/50">
+    <nav className={`fixed left-0 right-0 z-50 bg-background/80 backdrop-blur-md shadow-sm border-b border-border/50 ${isBannerVisible ? 'top-[40px]' : 'top-0'}`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-14 md:h-16">
           {/* Logo and Site Name */}
@@ -162,15 +164,37 @@ const Navbar = () => {
                         <p className="text-xs lg:text-sm text-muted-foreground">{user?.email}</p>
                       </div>
                       
-                      {/* Dashboard Link */}
-                      <NavLink
-                        to="/dashboard"
-                        className="flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm text-popover-foreground hover:bg-accent transition-colors"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        <Settings className="mr-2 lg:mr-3 h-3 w-3 lg:h-4 lg:w-4" />
-                        Dashboard
-                      </NavLink>
+                      {/* Role-based Dashboard Links */}
+                      {isAdmin() && (
+                        <NavLink
+                          to="/admin-dashboard"
+                          className="flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm text-popover-foreground hover:bg-accent transition-colors"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <Settings className="mr-2 lg:mr-3 h-3 w-3 lg:h-4 lg:w-4" />
+                          Admin Dashboard
+                        </NavLink>
+                      )}
+                      {isMemberOrAdmin() && !isAdmin() && (
+                        <NavLink
+                          to="/member-dashboard"
+                          className="flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm text-popover-foreground hover:bg-accent transition-colors"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <Settings className="mr-2 lg:mr-3 h-3 w-3 lg:h-4 lg:w-4" />
+                          Member Dashboard
+                        </NavLink>
+                      )}
+                      {userRole === 'user' && (
+                        <NavLink
+                          to="/dashboard"
+                          className="flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm text-popover-foreground hover:bg-accent transition-colors"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <Settings className="mr-2 lg:mr-3 h-3 w-3 lg:h-4 lg:w-4" />
+                          Dashboard
+                        </NavLink>
+                      )}
                       
                       {/* Logout Button */}
                       <button
@@ -276,15 +300,37 @@ const Navbar = () => {
                     </div>
                   </div>
                   
-                  {/* Dashboard Link */}
-                  <NavLink
-                    to="/dashboard"
-                    className="flex items-center px-3 py-2 text-base font-medium text-foreground hover:text-emerald-600 transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <Settings className="mr-3 h-5 w-5" />
-                    Dashboard
-                  </NavLink>
+                  {/* Role-based Dashboard Links */}
+                  {isAdmin() && (
+                    <NavLink
+                      to="/admin-dashboard"
+                      className="flex items-center px-3 py-2 text-base font-medium text-foreground hover:text-emerald-600 transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Settings className="mr-3 h-5 w-5" />
+                      Admin Dashboard
+                    </NavLink>
+                  )}
+                  {isMemberOrAdmin() && !isAdmin() && (
+                    <NavLink
+                      to="/member-dashboard"
+                      className="flex items-center px-3 py-2 text-base font-medium text-foreground hover:text-emerald-600 transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Settings className="mr-3 h-5 w-5" />
+                      Member Dashboard
+                    </NavLink>
+                  )}
+                  {userRole === 'user' && (
+                    <NavLink
+                      to="/dashboard"
+                      className="flex items-center px-3 py-2 text-base font-medium text-foreground hover:text-emerald-600 transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Settings className="mr-3 h-5 w-5" />
+                      Dashboard
+                    </NavLink>
+                  )}
                   
                   {/* Logout Button */}
                   <button
