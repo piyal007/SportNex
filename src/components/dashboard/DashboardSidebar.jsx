@@ -114,27 +114,28 @@ const DashboardSidebar = () => {
               );
             })}
 
+            {/* Profile Button */}
+            <li>
+              <NavLink
+                to={userRole === 'admin' ? '/admin-dashboard' : '/dashboard/profile'}
+                end={true}
+                className={({ isActive }) => `
+                  flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
+                  ${isActive
+                    ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
+                  }
+                `}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <User className="w-5 h-5 mr-3" />
+                <span className="font-medium">Profile</span>
+              </NavLink>
+            </li>
+
             {/* Show additional menu items only for non-admin users */}
             {userRole !== 'admin' && (
               <>
-                {/* My Profile Button */}
-                <li>
-                  <NavLink
-                    to="/dashboard"
-                    end={true}
-                    className={({ isActive }) => `
-                      flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
-                      ${isActive
-                        ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
-                      }
-                    `}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <User className="w-5 h-5 mr-3" />
-                    <span className="font-medium">My Profile</span>
-                  </NavLink>
-                </li>
 
                 {/* Pending Bookings Button */}
                 <li>

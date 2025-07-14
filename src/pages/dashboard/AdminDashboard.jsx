@@ -1,12 +1,63 @@
+import { Outlet } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import DashboardSidebar from '../../components/dashboard/DashboardSidebar';
 import DashboardHeader from '../../components/dashboard/DashboardHeader';
 import { ScaleLoader } from 'react-spinners';
 import { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 
 const AdminDashboard = () => {
   const { user, loading } = useAuth();
   const [showLoader, setShowLoader] = useState(true);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalMembers: 0,
+    totalCourts: 0,
+    loading: true
+  });
+
+  // Fetch admin statistics
+  const fetchAdminStats = async () => {
+    try {
+      if (!user) return;
+      
+      const token = await user.getIdToken();
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+      
+      // Fetch user statistics
+      const userStatsResponse = await fetch(`${API_BASE_URL}/api/users/stats/overview`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      // Fetch courts data to count total courts
+      const courtsResponse = await fetch(`${API_BASE_URL}/api/courts`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (userStatsResponse.ok && courtsResponse.ok) {
+        const userStats = await userStatsResponse.json();
+        const courtsData = await courtsResponse.json();
+        
+        setStats({
+          totalUsers: userStats.totalUsers || 0,
+          totalMembers: userStats.totalMembers || 0,
+          totalCourts: courtsData.pagination?.total || courtsData.data?.length || 0,
+          loading: false
+        });
+      } else {
+        throw new Error('Failed to fetch statistics');
+      }
+    } catch (error) {
+      console.error('Error fetching admin statistics:', error);
+      toast.error('Failed to load statistics');
+      setStats(prev => ({ ...prev, loading: false }));
+    }
+  };
 
   useEffect(() => {
     // Add a minimum loading time for better UX, but make it responsive to auth state
@@ -16,6 +67,12 @@ const AdminDashboard = () => {
 
     return () => clearTimeout(timer);
   }, [loading]);
+
+  useEffect(() => {
+    if (user && !loading) {
+      fetchAdminStats();
+    }
+  }, [user, loading]);
 
   if (loading || showLoader) {
     return (
@@ -49,15 +106,7 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <main className="pt-20 lg:pt-24 lg:ml-64 p-4 lg:p-8 min-h-screen overflow-x-hidden">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Welcome, Administrator!</h2>
-            <p className="text-gray-600">
-              This is your admin dashboard. Admin-specific functionality will be implemented here.
-            </p>
-          </div>
-        </div>
+        <Outlet />
       </main>
     </div>
   );

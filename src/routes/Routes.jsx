@@ -13,6 +13,7 @@ import RoleBasedRedirect from "@/components/RoleBasedRedirect";
 import AdminSetup from "@/components/AdminSetup";
 import Dashboard from "@/pages/dashboard/Dashboard";
 import AdminDashboard from "@/pages/dashboard/AdminDashboard";
+import AdminDashboardHome from "@/pages/dashboard/AdminDashboardHome";
 import Profile from "@/pages/dashboard/Profile";
 import PendingBookings from "@/pages/dashboard/PendingBookings";
 import ApprovedBookings from "@/pages/dashboard/ApprovedBookings";
@@ -63,7 +64,10 @@ const router = createBrowserRouter([
     {
         path: "/admin-dashboard",
         element: <AdminRoute><AdminDashboard /></AdminRoute>,
-        errorElement: <Error />
+        errorElement: <Error />,
+        children: [
+          { index: true, element: <AdminDashboardHome /> }
+        ]
     },
 ]);
 
