@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
   onAuthStateChanged,
   updateProfile,
   GoogleAuthProvider,
@@ -46,15 +46,15 @@ export const AuthProvider = ({ children }) => {
 
       const response = await userAPI.createOrUpdateUser(userData);
       const backendUser = response.data.user;
-      
+
       setUserDoc(backendUser);
       setUserRole(backendUser.role);
-      
+
       // Store auth token if provided
       if (response.data.token) {
         localStorage.setItem('authToken', response.data.token);
       }
-      
+
       return backendUser;
     } catch (error) {
       console.error('Error creating/updating user in backend:', error);
@@ -70,10 +70,10 @@ export const AuthProvider = ({ children }) => {
       setRoleLoading(true);
       const response = await userAPI.getUserByUid(firebaseUid);
       const backendUser = response.data.user;
-      
+
       setUserDoc(backendUser);
       setUserRole(backendUser.role);
-      
+
       return backendUser;
     } catch (error) {
       console.error('Error fetching user role:', error);
@@ -90,15 +90,15 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      
+
       // Update user profile with name
       await updateProfile(result.user, {
         displayName: name
       });
-      
+
       // Create user in backend
       await createOrUpdateUserInBackend(result.user);
-      
+
       toast.success('Welcome to SportNex! Your account has been created successfully.');
       return result;
     } catch (error) {
@@ -115,10 +115,10 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const result = await signInWithEmailAndPassword(auth, email, password);
-      
+
       // Fetch or create user in backend
       await createOrUpdateUserInBackend(result.user);
-      
+
       toast.success('Welcome back! You have been signed in successfully.');
       return result;
     } catch (error) {
@@ -135,10 +135,10 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const result = await signInWithPopup(auth, googleProvider);
-      
+
       // Create or update user in backend
       await createOrUpdateUserInBackend(result.user);
-      
+
       toast.success('Welcome! You have been signed in with Google successfully.');
       return result;
     } catch (error) {
@@ -154,12 +154,12 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await signOut(auth);
-      
+
       // Clear user data and token
       setUserRole(null);
       setUserDoc(null);
       localStorage.removeItem('authToken');
-      
+
       toast.success('You have been signed out successfully.');
     } catch (error) {
       const friendlyMessage = getErrorMessage(error);
@@ -192,7 +192,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      
+
       if (currentUser) {
         // Create or update user in backend (this will create if doesn't exist)
         try {
@@ -212,7 +212,7 @@ export const AuthProvider = ({ children }) => {
         setUserDoc(null);
         localStorage.removeItem('authToken');
       }
-      
+
       setLoading(false);
     });
 

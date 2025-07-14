@@ -44,22 +44,22 @@ api.interceptors.response.use(
 export const userAPI = {
   // Create or update user profile
   createOrUpdateUser: (userData) => api.post('/api/users', userData),
-  
+
   // Get user by Firebase UID
   getUserByUid: (firebaseUid) => api.get(`/api/users/${firebaseUid}`),
-  
+
   // Update user profile (protected)
   updateUser: (firebaseUid, userData) => api.put(`/api/users/${firebaseUid}`, userData),
-  
+
   // Get all users (admin only)
   getAllUsers: (params = {}) => api.get('/api/users', { params }),
-  
+
   // Update user role (admin only)
   updateUserRole: (firebaseUid, role) => api.patch(`/api/users/${firebaseUid}/role`, { role }),
-  
+
   // Delete user (admin only)
   deleteUser: (firebaseUid) => api.delete(`/api/users/${firebaseUid}`),
-  
+
   // Get user statistics (admin only)
   getUserStats: () => api.get('/api/users/stats/overview'),
 };
@@ -94,7 +94,7 @@ export const announcementsAPI = {
 
 // Payments API (to be implemented)
 export const paymentsAPI = {
-  createPaymentIntent: (amount, currency = 'usd') => 
+  createPaymentIntent: (amount, currency = 'usd') =>
     api.post('/api/payments/create-intent', { amount, currency }),
   confirmPayment: (paymentData) => api.post('/api/payments/confirm', paymentData),
   getPaymentHistory: (params = {}) => api.get('/api/payments', { params }),

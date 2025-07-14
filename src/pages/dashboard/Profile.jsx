@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { User, Mail, Calendar, Camera } from 'lucide-react';
+import { User, Mail, Calendar, Camera, Award } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
@@ -167,6 +167,19 @@ const Profile = () => {
                     </p>
                   </div>
                 </div>
+
+                {/* Show membership date only for members */}
+                {userProfile?.role === 'member' && (
+                  <div className="flex items-center p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                    <Award className="w-5 h-5 text-emerald-600 mr-3" />
+                    <div>
+                      <p className="text-sm text-emerald-700">Member Since</p>
+                      <p className="font-medium text-emerald-900">
+                        {userProfile?.memberSince ? formatDate(userProfile.memberSince) : 'Not available'}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

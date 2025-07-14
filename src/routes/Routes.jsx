@@ -12,8 +12,10 @@ import { AdminRoute, MemberRoute } from "@/components/RoleBasedRoute";
 import RoleBasedRedirect from "@/components/RoleBasedRedirect";
 import AdminSetup from "@/components/AdminSetup";
 import Dashboard from "@/pages/dashboard/Dashboard";
+import AdminDashboard from "@/pages/dashboard/AdminDashboard";
 import Profile from "@/pages/dashboard/Profile";
 import PendingBookings from "@/pages/dashboard/PendingBookings";
+import ApprovedBookings from "@/pages/dashboard/ApprovedBookings";
 import Announcements from "@/pages/dashboard/Announcements";
 import UserRoute from "@/components/UserRoute";
 
@@ -54,8 +56,14 @@ const router = createBrowserRouter([
           { index: true, element: <Profile /> },
           { path: "profile", element: <Profile /> },
           { path: "pending-bookings", element: <PendingBookings /> },
+          { path: "approved-bookings", element: <ApprovedBookings /> },
           { path: "announcements", element: <Announcements /> }
         ]
+    },
+    {
+        path: "/admin-dashboard",
+        element: <AdminRoute><AdminDashboard /></AdminRoute>,
+        errorElement: <Error />
     },
 ]);
 

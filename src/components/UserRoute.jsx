@@ -14,8 +14,8 @@ const UserRoute = ({ children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Check if user has 'user' role
-  if (userRole !== 'user') {
+  // Check if user has 'user' or 'member' role
+  if (userRole !== 'user' && userRole !== 'member') {
     return <Navigate to="/" replace />;
   }
 

@@ -8,7 +8,9 @@ import {
   Home,
   LogOut,
   Calendar,
-  Megaphone
+  Megaphone,
+  CheckCircle,
+  CalendarCheck
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -88,6 +90,7 @@ const DashboardSidebar = () => {
         {/* Navigation Menu */}
         <nav className="p-4 flex-1 overflow-y-auto">
           <ul className="space-y-2">
+            {/* Home Button */}
             {filteredMenuItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -111,60 +114,105 @@ const DashboardSidebar = () => {
               );
             })}
 
-            {/* My Profile Button */}
-            <li>
-              <NavLink
-                to="/dashboard"
-                end={true}
-                className={({ isActive }) => `
-                  flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
-                  ${isActive
-                    ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
-                  }
-                `}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <User className="w-5 h-5 mr-3" />
-                <span className="font-medium">My Profile</span>
-              </NavLink>
-            </li>
+            {/* Show additional menu items only for non-admin users */}
+            {userRole !== 'admin' && (
+              <>
+                {/* My Profile Button */}
+                <li>
+                  <NavLink
+                    to="/dashboard"
+                    end={true}
+                    className={({ isActive }) => `
+                      flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
+                      ${isActive
+                        ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
+                      }
+                    `}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <User className="w-5 h-5 mr-3" />
+                    <span className="font-medium">My Profile</span>
+                  </NavLink>
+                </li>
 
-            {/* Pending Bookings Button */}
-            <li>
-              <NavLink
-                to="/dashboard/pending-bookings"
-                className={({ isActive }) => `
-                  flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
-                  ${isActive
-                    ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
-                  }
-                `}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <Calendar className="w-5 h-5 mr-3" />
-                <span className="font-medium">Pending Bookings</span>
-              </NavLink>
-            </li>
+                {/* Pending Bookings Button */}
+                <li>
+                  <NavLink
+                    to="/dashboard/pending-bookings"
+                    className={({ isActive }) => `
+                      flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
+                      ${isActive
+                        ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
+                      }
+                    `}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Calendar className="w-5 h-5 mr-3" />
+                    <span className="font-medium">Pending Bookings</span>
+                  </NavLink>
+                </li>
 
-            {/* Announcements Button */}
-            <li>
-              <NavLink
-                to="/dashboard/announcements"
-                className={({ isActive }) => `
-                  flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
-                  ${isActive
-                    ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
-                  }
-                `}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <Megaphone className="w-5 h-5 mr-3" />
-                <span className="font-medium">Announcements</span>
-              </NavLink>
-            </li>
+                {/* Approved Bookings Button - Only for Members */}
+                {userRole === 'member' && (
+                  <li>
+                    <NavLink
+                      to="/dashboard/approved-bookings"
+                      className={({ isActive }) => `
+                        flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
+                        ${isActive
+                          ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
+                          : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
+                        }
+                      `}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <CheckCircle className="w-5 h-5 mr-3" />
+                      <span className="font-medium">Approved Bookings</span>
+                    </NavLink>
+                  </li>
+                )}
+
+                {/* Confirmed Bookings Button - Only for Members */}
+                {userRole === 'member' && (
+                  <li>
+                    <NavLink
+                      to="/dashboard/confirmed-bookings"
+                      className={({ isActive }) => `
+                        flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
+                        ${isActive
+                          ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
+                          : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
+                        }
+                      `}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <CalendarCheck className="w-5 h-5 mr-3" />
+                      <span className="font-medium">Confirmed Bookings</span>
+                    </NavLink>
+                  </li>
+                )}
+
+                {/* Announcements Button */}
+                <li>
+                  <NavLink
+                    to="/dashboard/announcements"
+                    className={({ isActive }) => `
+                      flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
+                      ${isActive
+                        ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
+                      }
+                    `}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Megaphone className="w-5 h-5 mr-3" />
+                    <span className="font-medium">Announcements</span>
+                  </NavLink>
+                </li>
+              </>
+            )}
 
             {/* Logout Button */}
             <li>

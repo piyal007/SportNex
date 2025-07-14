@@ -1,11 +1,10 @@
-import { Outlet } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import DashboardSidebar from '../../components/dashboard/DashboardSidebar';
 import DashboardHeader from '../../components/dashboard/DashboardHeader';
 import { ScaleLoader } from 'react-spinners';
 import { useState, useEffect } from 'react';
 
-const Dashboard = () => {
+const AdminDashboard = () => {
   const { user, loading } = useAuth();
   const [showLoader, setShowLoader] = useState(true);
 
@@ -50,10 +49,18 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="pt-20 lg:pt-24 lg:ml-64 p-4 lg:p-8 min-h-screen overflow-x-hidden">
-        <Outlet />
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Welcome, Administrator!</h2>
+            <p className="text-gray-600">
+              This is your admin dashboard. Admin-specific functionality will be implemented here.
+            </p>
+          </div>
+        </div>
       </main>
     </div>
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;

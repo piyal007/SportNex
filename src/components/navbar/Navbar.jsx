@@ -10,11 +10,11 @@ import Swal from 'sweetalert2'
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  
+
   const { user, logout, loading, userRole, isAdmin, isMemberOrAdmin } = useAuth()
   const { isBannerVisible } = useAdminSetupBanner()
   const navigate = useNavigate()
-  
+
   // Default user image if none provided
   const defaultUserImage = "https://i.postimg.cc/yxzXkbkL/avatar.jpg"
 
@@ -44,7 +44,7 @@ const Navbar = () => {
         await logout()
         setIsDropdownOpen(false)
         setIsMobileMenuOpen(false)
-        
+
         Swal.fire({
           title: 'Logged out!',
           text: 'You have been successfully logged out.',
@@ -79,9 +79,9 @@ const Navbar = () => {
           {/* Logo and Site Name */}
           <div className="flex items-center space-x-2 md:space-x-3">
             <div className="flex-shrink-0 flex items-center">
-              <img 
-                src="https://i.postimg.cc/fbdm9xQ6/SportNex.png" 
-                alt="SportNex Logo" 
+              <img
+                src="https://i.postimg.cc/fbdm9xQ6/SportNex.png"
+                alt="SportNex Logo"
                 className="w-8 h-8 md:w-10 md:h-10 object-contain"
               />
             </div>
@@ -93,47 +93,45 @@ const Navbar = () => {
           {/* Navigation Links - Hidden on mobile, visible on tablet and up */}
           <div className="hidden md:block">
             <div className="flex items-baseline space-x-4 lg:space-x-8">
-              <NavLink 
-                to="/" 
-                className={({ isActive }) => 
-                  `px-2 lg:px-3 py-2 text-sm font-medium transition-colors ${
-                    isActive 
-                      ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
-                  : 'text-foreground hover:text-emerald-600'
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  `px-2 lg:px-3 py-2 text-sm font-medium transition-colors ${isActive
+                    ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
+                    : 'text-foreground hover:text-emerald-600'
                   }`
                 }
               >
                 Home
               </NavLink>
-              <NavLink 
-                 to="/courts" 
-                 className={({ isActive }) => 
-                   `px-2 lg:px-3 py-2 text-sm font-medium transition-colors ${
-                     isActive 
-                       ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
-                  : 'text-foreground hover:text-emerald-600'
-                   }`
-                 }
-               >
-                 Courts
-               </NavLink>
-             </div>
-           </div>
+              <NavLink
+                to="/courts"
+                className={({ isActive }) =>
+                  `px-2 lg:px-3 py-2 text-sm font-medium transition-colors ${isActive
+                    ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
+                    : 'text-foreground hover:text-emerald-600'
+                  }`
+                }
+              >
+                Courts
+              </NavLink>
+            </div>
+          </div>
 
           {/* Theme Toggle and Login/Profile Section - Hidden on mobile */}
           <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
             <ThemeToggle />
             {!user ? (
               <>
-                <Button 
-                  onClick={handleRegister} 
+                <Button
+                  onClick={handleRegister}
                   variant="outline"
                   className="text-sm px-3 lg:px-4 border-emerald-600 text-emerald-600 hover:bg-emerald-50"
                 >
                   Register
                 </Button>
-                <Button 
-                  onClick={handleLogin} 
+                <Button
+                  onClick={handleLogin}
                   className="bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-800 text-sm px-3 lg:px-4"
                 >
                   Login
@@ -163,19 +161,31 @@ const Navbar = () => {
                         <p className="text-xs lg:text-sm font-medium text-popover-foreground">{user?.displayName || 'User'}</p>
                         <p className="text-xs lg:text-sm text-muted-foreground">{user?.email}</p>
                       </div>
-                      
+
                       {/* Dashboard Links */}
-              {userRole === 'user' && (
-                <NavLink
-                  to="/dashboard"
-                  className="flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm text-popover-foreground hover:bg-accent transition-colors"
-                  onClick={() => setIsDropdownOpen(false)}
-                >
-                  <Settings className="mr-2 lg:mr-3 h-3 w-3 lg:h-4 lg:w-4" />
-                  Dashboard
-                </NavLink>
-              )}
-                      
+                      {(userRole === 'user' || userRole === 'member') && (
+                        <NavLink
+                          to="/dashboard"
+                          className="flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm text-popover-foreground hover:bg-accent transition-colors"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <Settings className="mr-2 lg:mr-3 h-3 w-3 lg:h-4 lg:w-4" />
+                          Dashboard
+                        </NavLink>
+                      )}
+
+                      {/* Admin Dashboard Link */}
+                      {userRole === 'admin' && (
+                        <NavLink
+                          to="/admin-dashboard"
+                          className="flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm text-popover-foreground hover:bg-accent transition-colors"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <Settings className="mr-2 lg:mr-3 h-3 w-3 lg:h-4 lg:w-4" />
+                          Admin Dashboard
+                        </NavLink>
+                      )}
+
                       {/* Logout Button */}
                       <button
                         onClick={handleLogout}
@@ -194,7 +204,7 @@ const Navbar = () => {
           {/* Mobile Theme Toggle and Menu button - Only visible on mobile */}
           <div className="md:hidden flex items-center space-x-2">
             <ThemeToggle />
-            <button 
+            <button
               onClick={toggleMobileMenu}
               className="text-muted-foreground hover:text-foreground p-2 rounded-md transition-colors cursor-pointer"
               aria-label="Toggle mobile menu"
@@ -214,52 +224,50 @@ const Navbar = () => {
         <div className="md:hidden border-t border-border">
           <div className="px-4 pt-2 pb-3 space-y-1 bg-background">
             {/* Navigation Links */}
-            <NavLink 
-                to="/" 
-                className={({ isActive }) => 
-                  `block px-3 py-2 text-base font-medium transition-colors ${
-                    isActive 
-                      ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
-                      : 'text-foreground hover:text-emerald-600 hover:bg-accent'
-                  }`
-                }
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Home
-              </NavLink>
-              <NavLink 
-                to="/courts" 
-                className={({ isActive }) => 
-                  `block px-3 py-2 text-base font-medium transition-colors ${
-                    isActive 
-                      ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
-                      : 'text-foreground hover:text-emerald-600 hover:bg-accent'
-                  }`
-                }
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Courts
-              </NavLink>
-            
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `block px-3 py-2 text-base font-medium transition-colors ${isActive
+                  ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
+                  : 'text-foreground hover:text-emerald-600 hover:bg-accent'
+                }`
+              }
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Home
+            </NavLink>
+            <NavLink
+              to="/courts"
+              className={({ isActive }) =>
+                `block px-3 py-2 text-base font-medium transition-colors ${isActive
+                  ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
+                  : 'text-foreground hover:text-emerald-600 hover:bg-accent'
+                }`
+              }
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Courts
+            </NavLink>
+
             {/* Mobile Login/Profile Section */}
             <div className="pt-2 border-t border-border mt-2">
               {!user ? (
                 <div className="space-y-2">
-                  <Button 
+                  <Button
                     onClick={() => {
                       handleRegister()
                       setIsMobileMenuOpen(false)
-                    }} 
+                    }}
                     variant="outline"
                     className="w-full border-emerald-600 text-emerald-600 hover:bg-emerald-50"
                   >
                     Register
                   </Button>
-                  <Button 
+                  <Button
                     onClick={() => {
                       handleLogin()
                       setIsMobileMenuOpen(false)
-                    }} 
+                    }}
                     className="w-full bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-800"
                   >
                     Login
@@ -279,19 +287,31 @@ const Navbar = () => {
                       <p className="text-xs text-muted-foreground">{user?.email}</p>
                     </div>
                   </div>
-                  
+
                   {/* Dashboard Links */}
-                {userRole === 'user' && (
-                  <NavLink
-                    to="/dashboard"
-                    className="flex items-center px-3 py-2 text-base font-medium text-foreground hover:text-emerald-600 transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <Settings className="mr-3 h-5 w-5" />
-                    Dashboard
-                  </NavLink>
-                )}
-                  
+                  {(userRole === 'user' || userRole === 'member') && (
+                    <NavLink
+                      to="/dashboard"
+                      className="flex items-center px-3 py-2 text-base font-medium text-foreground hover:text-emerald-600 transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Settings className="mr-3 h-5 w-5" />
+                      Dashboard
+                    </NavLink>
+                  )}
+
+                  {/* Admin Dashboard Link */}
+                  {userRole === 'admin' && (
+                    <NavLink
+                      to="/admin-dashboard"
+                      className="flex items-center px-3 py-2 text-base font-medium text-foreground hover:text-emerald-600 transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Settings className="mr-3 h-5 w-5" />
+                      Admin Dashboard
+                    </NavLink>
+                  )}
+
                   {/* Logout Button */}
                   <button
                     onClick={() => {
