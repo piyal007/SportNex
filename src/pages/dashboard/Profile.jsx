@@ -14,17 +14,13 @@ const Profile = () => {
   }, [user]);
 
   const fetchUserProfile = async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     try {
       setLoading(true);
-      const token = await user.getIdToken();
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${user.uid}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${user.uid}`);
 
       if (response.ok) {
         const data = await response.json();
@@ -40,13 +36,46 @@ const Profile = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Not available';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+  const formatDate = (dateInput) => {
+    if (!dateInput) {
+      return 'Not available';
+    }
+    
+    try {
+      let dateToFormat;
+      
+      // Handle different date formats
+      if (typeof dateInput === 'object' && dateInput.$date) {
+        // MongoDB date format with $date wrapper
+        dateToFormat = new Date(dateInput.$date);
+      } else if (typeof dateInput === 'string') {
+        // ISO string format (most common from MongoDB Node.js driver)
+        dateToFormat = new Date(dateInput);
+      } else if (dateInput instanceof Date) {
+        // Already a Date object
+        dateToFormat = dateInput;
+      } else if (typeof dateInput === 'object' && dateInput.toISOString) {
+        // Date-like object
+        dateToFormat = new Date(dateInput.toISOString());
+      } else {
+        return 'Not available';
+      }
+      
+      // Check if date is valid
+      if (isNaN(dateToFormat.getTime())) {
+        return 'Not available';
+      }
+      
+      const formatted = dateToFormat.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      return formatted;
+    } catch (error) {
+      return 'Not available';
+    }
   };
 
   if (loading) {
@@ -139,7 +168,7 @@ const Profile = () => {
                   <div>
                     <p className="text-sm text-gray-500">Registration Date</p>
                     <p className="font-medium text-gray-900">
-                      {formatDate(userProfile?.registrationDate || userProfile?.createdAt)}
+                      {userProfile?.registrationDate ? formatDate(userProfile.registrationDate) : 'Not available'}
                     </p>
                   </div>
                 </div>
