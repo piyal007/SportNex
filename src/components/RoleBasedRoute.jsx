@@ -35,7 +35,7 @@ const RoleBasedRoute = ({ children, allowedRoles = [], redirectTo = '/' }) => {
     const roleRedirects = {
       'admin': '/',
       'member': '/',
-      'user': '/'
+      'user': '/dashboard'
     };
 
     const userRedirect = roleRedirects[userRole] || '/';

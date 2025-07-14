@@ -8,9 +8,12 @@ import Courts from "@/pages/courts/Courts";
 
 import PrivateRoute from "@/components/PrivateRoute";
 import PublicRoute from "@/components/PublicRoute";
-import { AdminRoute, MemberRoute, UserRoute } from "@/components/RoleBasedRoute";
+import { AdminRoute, MemberRoute } from "@/components/RoleBasedRoute";
 import RoleBasedRedirect from "@/components/RoleBasedRedirect";
 import AdminSetup from "@/components/AdminSetup";
+import Dashboard from "@/pages/dashboard/Dashboard";
+import Profile from "@/pages/dashboard/Profile";
+import UserRoute from "@/components/UserRoute";
 
 
 const router = createBrowserRouter([
@@ -35,11 +38,19 @@ const router = createBrowserRouter([
                 path: "/courts",
                 Component: Courts,
             },
-
             {
                 path: "/admin-setup",
                 element: <AdminSetup />,
             },
+        ]
+    },
+    {
+        path: "/dashboard",
+        element: <UserRoute><Dashboard /></UserRoute>,
+        errorElement: <Error />,
+        children: [
+          { index: true, element: <Profile /> },
+          { path: "profile", element: <Profile /> }
         ]
     },
 ]);

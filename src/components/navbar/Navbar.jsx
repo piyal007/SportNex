@@ -164,8 +164,17 @@ const Navbar = () => {
                         <p className="text-xs lg:text-sm text-muted-foreground">{user?.email}</p>
                       </div>
                       
-                      {/* Dashboard Links - Temporarily disabled until rebuilt */}
-                      {/* Dashboard functionality will be added back soon */}
+                      {/* Dashboard Links */}
+              {userRole === 'user' && (
+                <NavLink
+                  to="/dashboard"
+                  className="flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm text-popover-foreground hover:bg-accent transition-colors"
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  <Settings className="mr-2 lg:mr-3 h-3 w-3 lg:h-4 lg:w-4" />
+                  Dashboard
+                </NavLink>
+              )}
                       
                       {/* Logout Button */}
                       <button
@@ -271,8 +280,17 @@ const Navbar = () => {
                     </div>
                   </div>
                   
-                  {/* Dashboard Links - Temporarily disabled until rebuilt */}
-                  {/* Dashboard functionality will be added back soon */}
+                  {/* Dashboard Links */}
+                {userRole === 'user' && (
+                  <NavLink
+                    to="/dashboard"
+                    className="flex items-center px-3 py-2 text-base font-medium text-foreground hover:text-emerald-600 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Settings className="mr-3 h-5 w-5" />
+                    Dashboard
+                  </NavLink>
+                )}
                   
                   {/* Logout Button */}
                   <button
