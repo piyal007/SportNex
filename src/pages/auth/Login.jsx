@@ -22,7 +22,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const from = location.state?.from?.pathname || '/redirect-dashboard';
+  const from = location.state?.from?.pathname || '/';
 
   const handleChange = (e) => {
     setFormData({
@@ -43,7 +43,7 @@ const Login = () => {
       setIsLoading(true);
       await login(formData.email, formData.password);
       // Navigate to role-based redirect or intended destination
-      navigate(from === '/' ? '/redirect-dashboard' : from, { replace: true });
+      navigate(from === '/' ? '/' : from, { replace: true });
     } catch (error) {
       // Error is already handled in AuthContext with user-friendly message
     } finally {
@@ -56,7 +56,7 @@ const Login = () => {
       setIsGoogleLoading(true);
       await loginWithGoogle();
       // Navigate to role-based redirect or intended destination
-      navigate(from === '/' ? '/redirect-dashboard' : from, { replace: true });
+      navigate(from === '/' ? '/' : from, { replace: true });
     } catch (error) {
       // Error is already handled in AuthContext with user-friendly message
     } finally {

@@ -56,8 +56,8 @@ const AdminSetup = () => {
             toast.success('Admin account created successfully!');
             console.log('Admin setup completed:', response.data);
             
-            // Redirect to admin dashboard
-            navigate('/admin-dashboard');
+            // Redirect to home page (dashboard will be rebuilt)
+      navigate('/');
             
             // Reload the page to update auth context
             window.location.reload();

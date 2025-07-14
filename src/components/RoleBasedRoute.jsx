@@ -5,7 +5,7 @@ import { ClipLoader } from 'react-spinners';
 import toast from 'react-hot-toast';
 
 // Generic role-based route component
-const RoleBasedRoute = ({ children, allowedRoles = [], redirectTo = '/dashboard' }) => {
+const RoleBasedRoute = ({ children, allowedRoles = [], redirectTo = '/' }) => {
   const { user, userRole, loading, roleLoading } = useAuth();
   const location = useLocation();
 
@@ -33,12 +33,12 @@ const RoleBasedRoute = ({ children, allowedRoles = [], redirectTo = '/dashboard'
     
     // Redirect based on user's current role
     const roleRedirects = {
-      'admin': '/admin-dashboard',
-      'member': '/member-dashboard',
-      'user': '/dashboard'
+      'admin': '/',
+      'member': '/',
+      'user': '/'
     };
-    
-    const userRedirect = roleRedirects[userRole] || '/dashboard';
+
+    const userRedirect = roleRedirects[userRole] || '/';
     return <Navigate to={userRedirect} replace />;
   }
 

@@ -24,13 +24,14 @@ const RoleBasedRedirect = () => {
 
     // Redirect based on user role
     if (userRole) {
+      // Role-based redirect paths - temporarily redirect to home until dashboards are rebuilt
       const roleRedirects = {
-        'admin': '/admin-dashboard',
-        'member': '/member-dashboard',
-        'user': '/dashboard'
+        'admin': '/',
+        'member': '/',
+        'user': '/'
       };
 
-      const redirectPath = roleRedirects[userRole] || '/dashboard';
+      const redirectPath = roleRedirects[userRole] || '/';
       
       // Get the intended destination from location state (after login redirect)
       const from = location.state?.from?.pathname;
