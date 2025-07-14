@@ -6,7 +6,8 @@ import {
   Menu,
   X,
   Home,
-  LogOut
+  LogOut,
+  Calendar
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -125,6 +126,24 @@ const DashboardSidebar = () => {
               >
                 <User className="w-5 h-5 mr-3" />
                 <span className="font-medium">My Profile</span>
+              </NavLink>
+            </li>
+
+            {/* Pending Bookings Button */}
+            <li>
+              <NavLink
+                to="/dashboard/pending-bookings"
+                className={({ isActive }) => `
+                  flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
+                  ${isActive
+                    ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
+                  }
+                `}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Calendar className="w-5 h-5 mr-3" />
+                <span className="font-medium">Pending Bookings</span>
               </NavLink>
             </li>
 

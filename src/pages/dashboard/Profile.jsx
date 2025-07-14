@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { User, Mail, Calendar, Camera } from 'lucide-react';
-import { ClipLoader } from 'react-spinners';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
@@ -79,11 +78,7 @@ const Profile = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-96">
-        <ClipLoader color="#10b981" size={50} />
-      </div>
-    );
+    return null;
   }
 
   return (

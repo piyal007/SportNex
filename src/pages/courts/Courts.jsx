@@ -19,7 +19,7 @@ const Courts = () => {
   const courtsPerPage = viewMode === 'card' ? 6 : 10;
 
   // Mock data - replace with actual API call
-  
+
   // API base URL
   const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
@@ -29,7 +29,7 @@ const Courts = () => {
       try {
         const response = await fetch(`${API_BASE_URL}/courts`);
         const result = await response.json();
-        
+
         if (result.success) {
           // Transform MongoDB data to match frontend expectations
           const transformedCourts = result.data.map(court => ({
@@ -63,12 +63,37 @@ const Courts = () => {
 
   const handleBookingSubmit = async (bookingData) => {
     try {
-      // Replace with actual API call
-      console.log('Booking data:', bookingData);
-      toast.success('Booking request submitted! Waiting for admin approval.');
-      setIsModalOpen(false);
-      setSelectedCourt(null);
+      if (!user) {
+        toast.error('Please log in to make a booking');
+        navigate('/login');
+        return;
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/bookings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await user.getIdToken()}`
+        },
+        body: JSON.stringify({
+          courtId: bookingData.courtId,
+          date: bookingData.selectedDate,
+          slots: bookingData.selectedSlots,
+          totalPrice: bookingData.totalPrice
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        toast.success('Booking request submitted! Waiting for admin approval.');
+        setIsModalOpen(false);
+        setSelectedCourt(null);
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to submit booking request');
+      }
     } catch (error) {
+      console.error('Error submitting booking:', error);
       toast.error('Failed to submit booking request');
     }
   };
@@ -83,7 +108,7 @@ const Courts = () => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 !== 0;
-    
+
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(
@@ -104,7 +129,7 @@ const Courts = () => {
         );
       }
     }
-    
+
     return (
       <div className="flex items-center">
         {stars}
@@ -127,7 +152,7 @@ const Courts = () => {
               ${court.pricePerSession}/session
             </div>
           </div>
-          
+
           <div className="p-4">
             <div className="flex justify-between items-start mb-2">
               <h3 className="text-lg font-semibold text-gray-900">{court.name}</h3>
@@ -136,19 +161,19 @@ const Courts = () => {
                 <span className="text-sm text-gray-600 ml-1">{court.rating}</span>
               </div>
             </div>
-            
+
             <p className="text-emerald-600 font-medium mb-2">{court.type}</p>
-            
+
             <div className="flex items-center text-gray-600 text-sm mb-2">
               <MapPin className="w-4 h-4 mr-1" />
               <span>{court.location}</span>
             </div>
-            
+
             <div className="flex items-center text-gray-600 text-sm mb-3">
               <Users className="w-4 h-4 mr-1" />
               <span>Capacity: {court.capacity} people</span>
             </div>
-            
+
             <div className="mb-3">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Available Slots
@@ -162,7 +187,7 @@ const Courts = () => {
                 ))}
               </select>
             </div>
-            
+
             <button
               onClick={() => handleBookNow(court)}
               className="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 transition-colors duration-200 font-medium cursor-pointer"
@@ -281,11 +306,10 @@ const Courts = () => {
           <button
             key={index + 1}
             onClick={() => setCurrentPage(index + 1)}
-            className={`px-3 py-1 border rounded-md cursor-pointer ${
-              currentPage === index + 1
-                ? 'bg-emerald-600 text-white border-emerald-600'
-                : 'border-gray-300 hover:bg-gray-50'
-            }`}
+            className={`px-3 py-1 border rounded-md cursor-pointer ${currentPage === index + 1
+              ? 'bg-emerald-600 text-white border-emerald-600'
+              : 'border-gray-300 hover:bg-gray-50'
+              }`}
           >
             {index + 1}
           </button>
@@ -330,21 +354,19 @@ const Courts = () => {
           <div className="flex space-x-2">
             <button
               onClick={() => setViewMode('card')}
-              className={`px-4 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors ${
-                viewMode === 'card'
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-              }`}
+              className={`px-4 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors ${viewMode === 'card'
+                ? 'bg-emerald-600 text-white'
+                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                }`}
             >
               Card View
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`px-4 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors ${
-                viewMode === 'table'
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-              }`}
+              className={`px-4 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors ${viewMode === 'table'
+                ? 'bg-emerald-600 text-white'
+                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                }`}
             >
               Table View
             </button>

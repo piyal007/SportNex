@@ -194,11 +194,17 @@ export const AuthProvider = ({ children }) => {
       setUser(currentUser);
       
       if (currentUser) {
-        // Fetch user role from backend
+        // Create or update user in backend (this will create if doesn't exist)
         try {
-          await fetchUserRole(currentUser.uid);
+          await createOrUpdateUserInBackend(currentUser);
         } catch (error) {
-          console.error('Error fetching user role on auth change:', error);
+          console.error('Error creating/updating user on auth change:', error);
+          // Fallback to fetch if create/update fails
+          try {
+            await fetchUserRole(currentUser.uid);
+          } catch (fetchError) {
+            console.error('Error fetching user role as fallback:', fetchError);
+          }
         }
       } else {
         // Clear user data when logged out

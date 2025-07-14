@@ -30,7 +30,7 @@ const RoleBasedRoute = ({ children, allowedRoles = [], redirectTo = '/' }) => {
   if (allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
     // Show toast notification for unauthorized access
     toast.error(`Access denied. ${allowedRoles.join(' or ')} role required.`);
-    
+
     // Redirect based on user's current role
     const roleRedirects = {
       'admin': '/',

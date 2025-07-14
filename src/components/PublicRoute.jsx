@@ -15,7 +15,7 @@ const PublicRoute = ({ children }) => {
 
     // If user is authenticated, redirect to dashboard
     if (user && !loading) {
-      return <Navigate to="/dashboard" replace />;
+        return <Navigate to="/dashboard" replace />;
     }
 
     // If user is not authenticated, allow access to public routes

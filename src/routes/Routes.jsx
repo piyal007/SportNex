@@ -13,6 +13,7 @@ import RoleBasedRedirect from "@/components/RoleBasedRedirect";
 import AdminSetup from "@/components/AdminSetup";
 import Dashboard from "@/pages/dashboard/Dashboard";
 import Profile from "@/pages/dashboard/Profile";
+import PendingBookings from "@/pages/dashboard/PendingBookings";
 import UserRoute from "@/components/UserRoute";
 
 
@@ -50,7 +51,8 @@ const router = createBrowserRouter([
         errorElement: <Error />,
         children: [
           { index: true, element: <Profile /> },
-          { path: "profile", element: <Profile /> }
+          { path: "profile", element: <Profile /> },
+          { path: "pending-bookings", element: <PendingBookings /> }
         ]
     },
 ]);

@@ -9,30 +9,30 @@ import CTASection from './components/CTASection'
 
 const Home = () => {
   useTitle('Home')
-  
+
   return (
     <div className="min-h-screen">
       {/* Fancy Banner Section */}
-       <section className="py-2 md:py-4">
-         <div className="container mx-auto px-4">
-           <FancyBanner />
-         </div>
-       </section>
+      <section className="py-2 md:py-4">
+        <div className="container mx-auto px-4">
+          <FancyBanner />
+        </div>
+      </section>
 
-       {/* About Club Section */}
-        <AboutClub />
+      {/* About Club Section */}
+      <AboutClub />
 
-        {/* Location Section */}
-        <LocationSection />
-        
-        {/* Promotions Section */}
-        <PromotionsSection />
+      {/* Location Section */}
+      <LocationSection />
 
-        {/* Features Section */}
-        <FeaturesSection />
+      {/* Promotions Section */}
+      <PromotionsSection />
 
-        {/* CTA Section */}
-        <CTASection />
+      {/* Features Section */}
+      <FeaturesSection />
+
+      {/* CTA Section */}
+      <CTASection />
     </div>
   )
 }

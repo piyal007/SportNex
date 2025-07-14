@@ -25,17 +25,17 @@ const RoleBasedRedirect = () => {
     // Redirect based on user role
     if (userRole) {
       // Role-based redirect paths
-  const roleRedirects = {
-    'admin': '/',
-    'member': '/',
-    'user': '/dashboard'
-  };
+      const roleRedirects = {
+        'admin': '/',
+        'member': '/',
+        'user': '/dashboard'
+      };
 
-  const redirectPath = roleRedirects[userRole] || '/';
-      
+      const redirectPath = roleRedirects[userRole] || '/';
+
       // Get the intended destination from location state (after login redirect)
       const from = location.state?.from?.pathname;
-      
+
       // If user was trying to access a specific page, redirect there if they have permission
       if (from && from !== location.pathname) {
         // Check if the intended destination matches user's role
@@ -48,7 +48,7 @@ const RoleBasedRedirect = () => {
           return;
         }
       }
-      
+
       // Default redirect to role-appropriate dashboard
       navigate(redirectPath, { replace: true });
     }

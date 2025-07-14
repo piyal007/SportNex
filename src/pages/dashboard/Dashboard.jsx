@@ -2,15 +2,29 @@ import { Outlet } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import DashboardSidebar from '../../components/dashboard/DashboardSidebar';
 import DashboardHeader from '../../components/dashboard/DashboardHeader';
-import { ClipLoader } from 'react-spinners';
+import { ScaleLoader } from 'react-spinners';
+import { useState, useEffect } from 'react';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
+  const [showLoader, setShowLoader] = useState(true);
 
-  if (loading) {
+  useEffect(() => {
+    // Add a minimum loading time to make the loader visible
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading || showLoader) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <ClipLoader color="#10b981" size={50} />
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <ScaleLoader color="#10b981" height={50} width={6} radius={3} margin={3} />
+          <p className="mt-6 text-xl text-gray-700 font-medium animate-pulse">Loading Dashboard...</p>
+        </div>
       </div>
     );
   }

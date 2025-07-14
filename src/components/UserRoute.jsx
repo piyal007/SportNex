@@ -7,11 +7,7 @@ const UserRoute = ({ children }) => {
   const location = useLocation();
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
+    return null;
   }
 
   if (!user) {
