@@ -14,6 +14,7 @@ import AdminSetup from "@/components/AdminSetup";
 import Dashboard from "@/pages/dashboard/Dashboard";
 import Profile from "@/pages/dashboard/Profile";
 import PendingBookings from "@/pages/dashboard/PendingBookings";
+import Announcements from "@/pages/dashboard/Announcements";
 import UserRoute from "@/components/UserRoute";
 
 
@@ -52,7 +53,8 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Profile /> },
           { path: "profile", element: <Profile /> },
-          { path: "pending-bookings", element: <PendingBookings /> }
+          { path: "pending-bookings", element: <PendingBookings /> },
+          { path: "announcements", element: <Announcements /> }
         ]
     },
 ]);
