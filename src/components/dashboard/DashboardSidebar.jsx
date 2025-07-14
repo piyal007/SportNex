@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { 
-  User, 
-  Menu, 
+import {
+  User,
+  Menu,
   X,
   Home,
   LogOut
@@ -34,7 +34,7 @@ const DashboardSidebar = () => {
     }
   ];
 
-  const filteredMenuItems = menuItems.filter(item => 
+  const filteredMenuItems = menuItems.filter(item =>
     item.roles.includes(userRole)
   );
 
@@ -60,7 +60,7 @@ const DashboardSidebar = () => {
 
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
           onClick={() => setIsMobileMenuOpen(false)}
         />
@@ -95,8 +95,8 @@ const DashboardSidebar = () => {
                     end={item.path === '/dashboard'}
                     className={({ isActive }) => `
                       flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
-                      ${isActive 
-                        ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600' 
+                      ${isActive
+                        ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
                         : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
                       }
                     `}
@@ -108,7 +108,7 @@ const DashboardSidebar = () => {
                 </li>
               );
             })}
-            
+
             {/* My Profile Button */}
             <li>
               <NavLink
@@ -116,8 +116,8 @@ const DashboardSidebar = () => {
                 end={true}
                 className={({ isActive }) => `
                   flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
-                  ${isActive 
-                    ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600' 
+                  ${isActive
+                    ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
                     : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
                   }
                 `}
@@ -127,7 +127,7 @@ const DashboardSidebar = () => {
                 <span className="font-medium">My Profile</span>
               </NavLink>
             </li>
-            
+
             {/* Logout Button */}
             <li>
               <button

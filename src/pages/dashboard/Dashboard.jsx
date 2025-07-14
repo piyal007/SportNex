@@ -30,10 +30,10 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}
       <DashboardSidebar />
-      
+
       {/* Header */}
       <DashboardHeader />
-      
+
       {/* Main Content */}
       <main className="pt-20 lg:pt-24 lg:ml-64 p-4 lg:p-8 min-h-screen overflow-x-hidden">
         <Outlet />

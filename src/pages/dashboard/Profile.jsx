@@ -15,7 +15,7 @@ const Profile = () => {
 
   const fetchUserProfile = async () => {
     if (!user) return;
-    
+
     try {
       setLoading(true);
       const token = await user.getIdToken();
@@ -112,7 +112,7 @@ const Profile = () => {
             {/* Personal Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
-              
+
               <div className="space-y-3">
                 <div className="flex items-center p-3 bg-gray-50 rounded-lg">
                   <User className="w-5 h-5 text-gray-400 mr-3" />
@@ -149,18 +149,17 @@ const Profile = () => {
             {/* Account Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
-              
+
               <div className="space-y-3">
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-500">Account Type</p>
                   <div className="flex items-center mt-1">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      userProfile?.role === 'admin' 
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${userProfile?.role === 'admin'
                         ? 'bg-purple-100 text-purple-800'
                         : userProfile?.role === 'member'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}>
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
                       {userProfile?.role?.charAt(0).toUpperCase() + userProfile?.role?.slice(1) || 'User'}
                     </span>
                   </div>
@@ -169,11 +168,10 @@ const Profile = () => {
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-500">Account Status</p>
                   <div className="flex items-center mt-1">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      userProfile?.status === 'active'
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${userProfile?.status === 'active'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
-                    }`}>
+                      }`}>
                       {userProfile?.status?.charAt(0).toUpperCase() + userProfile?.status?.slice(1) || 'Active'}
                     </span>
                   </div>

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Bell, 
-  User, 
+import {
+  Bell,
+  User,
   Settings,
   ChevronDown
 } from 'lucide-react';
@@ -37,11 +37,11 @@ const DashboardHeader = () => {
             Welcome back, {user?.displayName?.split(' ')[0] || 'User'}!
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            {new Date().toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
+            {new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
             })}
           </p>
         </div>
@@ -72,7 +72,7 @@ const DashboardHeader = () => {
                   <User className="w-4 h-4 lg:w-5 lg:h-5 text-emerald-600" />
                 )}
               </div>
-              
+
               {/* User Info - Hidden on mobile */}
               <div className="hidden sm:block text-left">
                 <p className="text-sm font-medium text-gray-900">
@@ -82,7 +82,7 @@ const DashboardHeader = () => {
                   {userRole}
                 </p>
               </div>
-              
+
               <ChevronDown className="w-4 h-4 text-gray-400" />
             </button>
 
@@ -98,7 +98,7 @@ const DashboardHeader = () => {
                       {user?.email}
                     </p>
                   </div>
-                  
+
                   <button
                     onClick={() => {
                       setIsDropdownOpen(false);
@@ -109,7 +109,7 @@ const DashboardHeader = () => {
                     <User className="w-4 h-4 mr-3" />
                     My Profile
                   </button>
-                  
+
                   <button
                     onClick={() => {
                       setIsDropdownOpen(false);
@@ -120,7 +120,7 @@ const DashboardHeader = () => {
                     <Settings className="w-4 h-4 mr-3" />
                     Settings
                   </button>
-                  
+
 
                 </div>
               </div>
@@ -131,8 +131,8 @@ const DashboardHeader = () => {
 
       {/* Close dropdown when clicking outside */}
       {isDropdownOpen && (
-        <div 
-          className="fixed inset-0 z-40" 
+        <div
+          className="fixed inset-0 z-40"
           onClick={() => setIsDropdownOpen(false)}
         />
       )}
