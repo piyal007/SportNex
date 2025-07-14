@@ -19,6 +19,7 @@ import PendingBookings from "@/pages/dashboard/PendingBookings";
 import ApprovedBookings from "@/pages/dashboard/ApprovedBookings";
 import Announcements from "@/pages/dashboard/Announcements";
 import ManageBookings from "@/pages/dashboard/ManageBookings";
+import ManageMembers from "@/pages/dashboard/ManageMembers";
 import UserRoute from "@/components/UserRoute";
 
 
@@ -68,7 +69,8 @@ const router = createBrowserRouter([
         errorElement: <Error />,
         children: [
           { index: true, element: <AdminDashboardHome /> },
-          { path: "manage-bookings", element: <ManageBookings /> }
+          { path: "manage-bookings", element: <ManageBookings /> },
+          { path: "manage-members", element: <ManageMembers /> }
         ]
     },
 ]);
