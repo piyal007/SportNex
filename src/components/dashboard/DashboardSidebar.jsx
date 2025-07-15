@@ -10,7 +10,8 @@ import {
   Calendar,
   Megaphone,
   CheckCircle,
-  CalendarCheck
+  CalendarCheck,
+  Receipt
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -293,6 +294,26 @@ const DashboardSidebar = () => {
                     >
                       <CalendarCheck className="w-5 h-5 mr-3" />
                       <span className="font-medium">Confirmed Bookings</span>
+                    </NavLink>
+                  </li>
+                )}
+
+                {/* Payment History Button - Only for Members */}
+                {userRole === 'member' && (
+                  <li>
+                    <NavLink
+                      to="/dashboard/payment-history"
+                      className={({ isActive }) => `
+                        flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
+                        ${isActive
+                          ? 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-600'
+                          : 'text-gray-700 hover:bg-gray-50 hover:text-emerald-600'
+                        }
+                      `}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Receipt className="w-5 h-5 mr-3" />
+                      <span className="font-medium">Payment History</span>
                     </NavLink>
                   </li>
                 )}
