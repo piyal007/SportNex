@@ -18,6 +18,11 @@ const Courts = () => {
 
   const courtsPerPage = viewMode === 'card' ? 6 : 10;
 
+  // Reset to first page when view mode changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [viewMode]);
+
   // Mock data - replace with actual API call
 
   // API base URL
@@ -27,10 +32,10 @@ const Courts = () => {
     const fetchCourts = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/courts`);
+        const response = await fetch(`${API_BASE_URL}/courts?limit=100`); // Get all courts for client-side pagination
         const result = await response.json();
 
-        if (result.success) {
+        if (result.success && result.data) {
           // Transform MongoDB data to match frontend expectations
           const transformedCourts = result.data.map(court => ({
             ...court,
