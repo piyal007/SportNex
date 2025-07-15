@@ -205,7 +205,7 @@ const ApprovedBookings = () => {
                     </span>
                     <button
                       onClick={() => handlePayment(booking)}
-                      className="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 cursor-pointer font-semibold border border-emerald-600"
+                      className="flex items-center justify-center px-3 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 cursor-pointer font-semibold border border-emerald-600"
                     >
                       <CreditCard className="w-5 h-5 mr-2" />
                       Pay Now
@@ -213,7 +213,7 @@ const ApprovedBookings = () => {
                     <button
                       onClick={() => handleCancelBooking(booking._id)}
                       disabled={cancellingId === booking._id}
-                      className="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-200 cursor-pointer font-semibold border border-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center justify-center px-3 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-200 cursor-pointer font-semibold border border-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {cancellingId === booking._id ? (
                         <ScaleLoader color="white" height={16} width={2} />

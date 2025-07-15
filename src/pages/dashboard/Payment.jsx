@@ -4,28 +4,41 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
 import { CreditCard, Calendar, Clock, MapPin, DollarSign, Tag, ArrowLeft, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
-const Payment = () => {
+// Load Stripe
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+// Stripe card element options
+const cardElementOptions = {
+  style: {
+    base: {
+      fontSize: '16px',
+      color: '#424770',
+      '::placeholder': {
+        color: '#aab7c4',
+      },
+    },
+    invalid: {
+      color: '#9e2146',
+    },
+  },
+};
+
+// Payment Form Component with Stripe hooks
+const PaymentForm = ({ booking, fromPath }) => {
   const { user } = useAuth();
-  const location = useLocation();
   const navigate = useNavigate();
+  const stripe = useStripe();
+  const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [discountedPrice, setDiscountedPrice] = useState(null);
   const [applyingCoupon, setApplyingCoupon] = useState(false);
 
-  // Get booking data from navigation state
-  const booking = location.state?.booking;
-  const fromPath = location.state?.from || '/dashboard/approved-bookings';
 
-  useEffect(() => {
-    // Redirect if no booking data
-    if (!booking) {
-      toast.error('No booking data found');
-      navigate('/dashboard/approved-bookings');
-    }
-  }, [booking, navigate]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -85,9 +98,35 @@ const Payment = () => {
   const handleSubmitPayment = async (e) => {
     e.preventDefault();
     
+    if (!stripe || !elements) {
+      toast.error('Stripe not loaded yet. Please try again.');
+      return;
+    }
+
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) {
+      toast.error('Card information is required');
+      return;
+    }
+    
     try {
       setLoading(true);
       const token = await user.getIdToken();
+      
+      // Create payment method with Stripe
+      const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+        billing_details: {
+          email: user.email,
+        },
+      });
+
+      if (stripeError) {
+        toast.error(stripeError.message);
+        setLoading(false);
+        return;
+      }
       
       const paymentData = {
         bookingId: booking._id,
@@ -98,7 +137,8 @@ const Payment = () => {
         originalPrice: booking.totalPrice || booking.price,
         finalPrice: discountedPrice || booking.totalPrice || booking.price,
         couponCode: appliedCoupon?.code || null,
-        discount: appliedCoupon?.discount || 0
+        discount: appliedCoupon?.discount || 0,
+        paymentMethodId: paymentMethod.id
       };
 
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payments/process`, {
@@ -262,6 +302,19 @@ const Payment = () => {
             </div>
           </div>
 
+          {/* Card Information */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Card Information
+            </label>
+            <div className="p-4 border border-gray-300 rounded-lg bg-white">
+              <CardElement options={cardElementOptions} />
+            </div>
+            <p className="mt-2 text-sm text-gray-500">
+              Use test card: 4242 4242 4242 4242 with any future date and CVC
+            </p>
+          </div>
+
           {/* Price Summary */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Price Summary</h3>
@@ -304,6 +357,30 @@ const Payment = () => {
         </form>
       </div>
     </div>
+  );
+};
+
+// Main Payment Component
+const Payment = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Get booking data from navigation state
+  const booking = location.state?.booking;
+  const fromPath = location.state?.from || '/dashboard/approved-bookings';
+
+  useEffect(() => {
+    // Redirect if no booking data
+    if (!booking) {
+      toast.error('No booking data found');
+      navigate('/dashboard/approved-bookings');
+    }
+  }, [booking, navigate]);
+
+  return (
+    <Elements stripe={stripePromise}>
+      <PaymentForm booking={booking} fromPath={fromPath} />
+    </Elements>
   );
 };
 
