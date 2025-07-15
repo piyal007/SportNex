@@ -90,6 +90,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const result = await createUserWithEmailAndPassword(auth, email, password);
+      await setAuthToken(result.user);
 
       // Update user profile with name
       await updateProfile(result.user, {
@@ -115,6 +116,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const result = await signInWithEmailAndPassword(auth, email, password);
+      await setAuthToken(result.user);
 
       // Fetch or create user in backend
       await createOrUpdateUserInBackend(result.user);
@@ -135,6 +137,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const result = await signInWithPopup(auth, googleProvider);
+      await setAuthToken(result.user);
 
       // Create or update user in backend
       await createOrUpdateUserInBackend(result.user);
@@ -242,4 +245,13 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+};
+
+const setAuthToken = async (firebaseUser) => {
+  if (firebaseUser) {
+    const token = await firebaseUser.getIdToken();
+    localStorage.setItem('authToken', token);
+  } else {
+    localStorage.removeItem('authToken');
+  }
 };

@@ -105,7 +105,7 @@ export const couponsAPI = {
   getAllCoupons: () => api.get('/api/coupons'),
   validateCoupon: (code) => api.post('/api/coupons/validate', { code }),
   createCoupon: (couponData) => api.post('/api/coupons', couponData),
-  updateCoupon: (id, couponData) => api.put(`/api/coupons/${id}`, couponData),
+  updateCoupon: (id, couponData) => api.patch(`/api/coupons/${id}`, couponData),
   deleteCoupon: (id) => api.delete(`/api/coupons/${id}`),
 };
 

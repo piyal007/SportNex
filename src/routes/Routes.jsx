@@ -23,6 +23,7 @@ import ManageMembers from "@/pages/dashboard/ManageMembers";
 import AllUsers from "@/pages/dashboard/AllUsers";
 import ManageCourts from "@/pages/dashboard/ManageCourts";
 import UserRoute from "@/components/UserRoute";
+import ManageCoupons from "@/pages/dashboard/ManageCoupons";
 
 
 const router = createBrowserRouter([
@@ -74,7 +75,8 @@ const router = createBrowserRouter([
           { path: "manage-bookings", element: <ManageBookings /> },
           { path: "manage-members", element: <ManageMembers /> },
           { path: "all-users", element: <AllUsers /> },
-          { path: "manage-courts", element: <ManageCourts /> }
+          { path: "manage-courts", element: <ManageCourts /> },
+          { path: "manage-coupons", element: <ManageCoupons /> },
         ]
     },
 ]);

@@ -162,11 +162,18 @@ const ManageBookings = () => {
       booking.userEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.courtName?.toLowerCase().includes(searchTerm.toLowerCase());
-    
     const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
-    
     return matchesSearch && matchesStatus;
   });
+
+  // New: Filter confirmed bookings for separate table
+  const [confirmedSearch, setConfirmedSearch] = useState("");
+  const confirmedBookings = bookings.filter(
+    booking => booking.status === "confirmed" && (
+      booking.courtName?.toLowerCase().includes(confirmedSearch.toLowerCase()) ||
+      booking.userName?.toLowerCase().includes(confirmedSearch.toLowerCase())
+    )
+  );
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -213,7 +220,6 @@ const ManageBookings = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Bookings</h1>
         <p className="text-gray-600">Review and manage all booking requests from users and members.</p>
       </div>
-
       {/* Filters and Search */}
       <div className="bg-white rounded-lg shadow p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
@@ -230,7 +236,6 @@ const ManageBookings = () => {
               />
             </div>
           </div>
-          
           {/* Status Filter */}
           <div className="md:w-48">
             <select
@@ -246,7 +251,6 @@ const ManageBookings = () => {
           </div>
         </div>
       </div>
-
       {/* Bookings List */}
       <div className="bg-white rounded-lg shadow">
         {filteredBookings.length === 0 ? (
@@ -307,7 +311,6 @@ const ManageBookings = () => {
                         </div>
                       </div>
                     </td>
-
                     {/* Court & Date */}
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 font-medium">
@@ -318,7 +321,6 @@ const ManageBookings = () => {
                         {formatDate(booking.date)}
                       </div>
                     </td>
-
                     {/* Time Slots */}
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-900 flex items-center">
@@ -326,7 +328,6 @@ const ManageBookings = () => {
                         <span className="break-words">{formatSlots(booking.slots)}</span>
                       </div>
                     </td>
-
                     {/* Price */}
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 font-medium flex items-center">
@@ -334,12 +335,10 @@ const ManageBookings = () => {
                         ${booking.totalPrice || 0}
                       </div>
                     </td>
-
                     {/* Status */}
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(booking.status)}
                     </td>
-
                     {/* Actions */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       {booking.status === 'pending' && (
@@ -385,7 +384,55 @@ const ManageBookings = () => {
           </div>
         )}
       </div>
-
+      {/* Confirmed Bookings Table */}
+      <div className="bg-white rounded-lg shadow mt-10">
+        <div className="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <h2 className="text-xl font-bold text-gray-900">Confirmed Bookings</h2>
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search by court or user name..."
+              value={confirmedSearch}
+              onChange={e => setConfirmedSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            />
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Court</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slots</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {confirmedBookings.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8 text-gray-400">No confirmed bookings found.</td>
+                </tr>
+              ) : (
+                confirmedBookings.map(booking => (
+                  <tr key={booking._id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{booking.userName || 'Unknown User'}</div>
+                      <div className="text-sm text-gray-500">{booking.userEmail || 'No email'}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">{booking.courtName || 'Unknown Court'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{formatDate(booking.date)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{formatSlots(booking.slots)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">${booking.totalPrice || 0}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
       {/* Summary Stats */}
       {filteredBookings.length > 0 && (
         <div className="mt-6 bg-white rounded-lg shadow p-6">
