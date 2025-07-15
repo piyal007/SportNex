@@ -21,6 +21,7 @@ import Announcements from "@/pages/dashboard/Announcements";
 import ManageBookings from "@/pages/dashboard/ManageBookings";
 import ManageMembers from "@/pages/dashboard/ManageMembers";
 import AllUsers from "@/pages/dashboard/AllUsers";
+import ManageCourts from "@/pages/dashboard/ManageCourts";
 import UserRoute from "@/components/UserRoute";
 
 
@@ -72,7 +73,8 @@ const router = createBrowserRouter([
           { index: true, element: <AdminDashboardHome /> },
           { path: "manage-bookings", element: <ManageBookings /> },
           { path: "manage-members", element: <ManageMembers /> },
-          { path: "all-users", element: <AllUsers /> }
+          { path: "all-users", element: <AllUsers /> },
+          { path: "manage-courts", element: <ManageCourts /> }
         ]
     },
 ]);
