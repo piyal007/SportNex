@@ -77,6 +77,7 @@ const router = createBrowserRouter([
           { path: "all-users", element: <AllUsers /> },
           { path: "manage-courts", element: <ManageCourts /> },
           { path: "manage-coupons", element: <ManageCoupons /> },
+          { path: "announcements", element: <Announcements /> }
         ]
     },
 ]);
