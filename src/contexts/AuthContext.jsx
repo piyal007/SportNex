@@ -162,8 +162,6 @@ export const AuthProvider = ({ children }) => {
       setUserRole(null);
       setUserDoc(null);
       localStorage.removeItem('authToken');
-
-      toast.success('You have been signed out successfully.');
     } catch (error) {
       const friendlyMessage = getErrorMessage(error);
       toast.error(friendlyMessage);

@@ -24,6 +24,8 @@ import AllUsers from "@/pages/dashboard/AllUsers";
 import ManageCourts from "@/pages/dashboard/ManageCourts";
 import UserRoute from "@/components/UserRoute";
 import ManageCoupons from "@/pages/dashboard/ManageCoupons";
+import Payment from "@/pages/dashboard/Payment";
+import ConfirmedBookings from "@/pages/dashboard/ConfirmedBookings";
 
 
 const router = createBrowserRouter([
@@ -63,6 +65,8 @@ const router = createBrowserRouter([
           { path: "profile", element: <Profile /> },
           { path: "pending-bookings", element: <PendingBookings /> },
           { path: "approved-bookings", element: <ApprovedBookings /> },
+          { path: "payment", element: <MemberRoute><Payment /></MemberRoute> },
+          { path: "confirmed-bookings", element: <MemberRoute><ConfirmedBookings /></MemberRoute> },
           { path: "announcements", element: <Announcements /> }
         ]
     },
