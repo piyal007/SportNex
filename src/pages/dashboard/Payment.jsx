@@ -307,8 +307,38 @@ const PaymentForm = ({ booking, fromPath }) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Card Information
             </label>
-            <div className="p-4 border border-gray-300 rounded-lg bg-white">
-              <CardElement options={cardElementOptions} />
+            <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm mb-4">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Card Details
+                </label>
+                <div className="p-4 border border-gray-300 rounded-lg bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
+                  <CardElement options={{
+                    ...cardElementOptions,
+                    style: {
+                      base: {
+                        fontSize: '16px',
+                        color: '#374151',
+                        fontFamily: 'system-ui, -apple-system, sans-serif',
+                        fontWeight: '400',
+                        lineHeight: '24px',
+                        '::placeholder': {
+                          color: '#9CA3AF',
+                        },
+                        iconColor: '#6B7280',
+                      },
+                      invalid: {
+                        color: '#EF4444',
+                        iconColor: '#EF4444',
+                      },
+                      complete: {
+                        color: '#059669',
+                        iconColor: '#059669',
+                      },
+                    },
+                  }} />
+                </div>
+              </div>
             </div>
             <p className="mt-2 text-sm text-gray-500">
               Use test card: 4242 4242 4242 4242 with any future date and CVC
