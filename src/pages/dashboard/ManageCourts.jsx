@@ -136,7 +136,7 @@ const ManageCourts = () => {
   };
 
   return (
-    <div className="p-2 sm:p-4 max-w-5xl mx-auto">
+    <div className="p-2 sm:p-4 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h2 className="text-2xl font-extrabold flex items-center gap-2 text-emerald-700">
           <CheckCircle className="w-7 h-7" /> Manage Courts
@@ -153,39 +153,45 @@ const ManageCourts = () => {
           <ScaleLoader color="#10b981" />
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg shadow border border-gray-100 bg-white">
+        <div className="overflow-x-auto rounded-xl shadow border border-gray-100 bg-white">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-emerald-50">
+            <thead className="bg-emerald-100">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-emerald-700 uppercase tracking-wider">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-emerald-700 uppercase tracking-wider">Type</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-emerald-700 uppercase tracking-wider">Price</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-emerald-700 uppercase tracking-wider">Slots</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-emerald-700 uppercase tracking-wider">Image</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-emerald-700 uppercase tracking-wider">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-bold text-emerald-800 uppercase tracking-wider">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-bold text-emerald-800 uppercase tracking-wider">Type</th>
+                <th className="px-4 py-3 text-left text-xs font-bold text-emerald-800 uppercase tracking-wider">Price</th>
+                <th className="px-4 py-3 text-left text-xs font-bold text-emerald-800 uppercase tracking-wider">Slots</th>
+                <th className="px-4 py-3 text-left text-xs font-bold text-emerald-800 uppercase tracking-wider">Image</th>
+                <th className="px-4 py-3 text-left text-xs font-bold text-emerald-800 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
               {courts.length === 0 ? (
                 <tr><td colSpan="6" className="text-center py-8 text-gray-400">No courts found</td></tr>
               ) : (
-                courts.map(court => (
-                  <tr key={court._id} className="hover:bg-emerald-50 transition">
-                    <td className="px-4 py-3 font-medium text-gray-900">{court.name}</td>
-                    <td className="px-4 py-3 text-gray-700 capitalize">{court.type}</td>
-                    <td className="px-4 py-3 text-gray-700">${court.pricePerSession}</td>
-                    <td className="px-4 py-3 text-gray-700">{court.slots}</td>
-                    <td className="px-4 py-3"><img src={court.image} alt="court" className="w-16 h-10 object-cover rounded" /></td>
+                courts.map((court, idx) => (
+                  <tr key={court._id} className={`transition ${idx % 2 === 0 ? 'bg-emerald-50' : 'bg-white'} hover:bg-emerald-100`}>
+                    <td className="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap">{court.name}</td>
+                    <td className="px-4 py-3 text-gray-700 capitalize whitespace-nowrap">{court.type}</td>
+                    <td className="px-4 py-3 text-gray-700 whitespace-nowrap">${court.pricePerSession}</td>
+                    <td className="px-4 py-3 text-gray-700 whitespace-nowrap max-w-xs">
+                      <select className="w-full bg-white border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none cursor-pointer">
+                        {Array.isArray(court.availableSlots) && court.availableSlots.length > 0 ? court.availableSlots.map((slot, i) => (
+                          <option key={i} value={slot}>{slot}</option>
+                        )) : <option>No slots</option>}
+                      </select>
+                    </td>
+                    <td className="px-4 py-3"><img src={court.image} alt="court" className="w-16 h-10 object-cover rounded shadow" /></td>
                     <td className="px-4 py-3 flex gap-2">
                       <button
-                        className="p-2 rounded hover:bg-emerald-100 text-emerald-700 cursor-pointer"
+                        className="p-2 rounded hover:bg-emerald-200 text-emerald-700 cursor-pointer"
                         onClick={() => openEditModal(court)}
                         title="Edit"
                       >
                         <Edit className="w-5 h-5" />
                       </button>
                       <button
-                        className="p-2 rounded hover:bg-red-100 text-red-600 cursor-pointer"
+                        className="p-2 rounded hover:bg-red-200 text-red-600 cursor-pointer"
                         onClick={() => handleDelete(court._id)}
                         title="Delete"
                         disabled={submitting}
@@ -203,7 +209,7 @@ const ManageCourts = () => {
       {/* Modal for Add/Edit Court */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl relative">
             <button
               className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 cursor-pointer"
               onClick={() => setModalOpen(false)}
