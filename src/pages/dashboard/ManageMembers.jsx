@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ScaleLoader } from 'react-spinners';
 import { User, X, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import Swal from 'sweetalert2';
 
 const ManageMembers = () => {
@@ -45,8 +45,8 @@ const ManageMembers = () => {
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
       confirmButtonText: "Yes, delete it!"
     });
 

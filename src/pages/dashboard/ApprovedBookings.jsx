@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ScaleLoader } from 'react-spinners';
 import { Calendar, Clock, MapPin, DollarSign, CreditCard, X } from 'lucide-react';

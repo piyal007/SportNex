@@ -167,7 +167,7 @@ const Courts = () => {
               </div>
             </div>
 
-            <p className="text-emerald-600 font-medium mb-2">{court.type}</p>
+            <p className="text-emerald-600 font-medium mb-2 capitalize">{court.type}</p>
 
             <div className="flex items-center text-gray-600 text-sm mb-2">
               <MapPin className="w-4 h-4 mr-1" />
@@ -252,7 +252,7 @@ const Courts = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                  <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 capitalize">
                     {court.type}
                   </span>
                 </td>

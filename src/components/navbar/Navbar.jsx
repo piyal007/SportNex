@@ -158,7 +158,7 @@ const Navbar = () => {
                     <div className="py-1">
                       {/* User Info - Not Clickable */}
                       <div className="px-3 lg:px-4 py-2 lg:py-3 border-b border-border">
-                        <p className="text-xs lg:text-sm font-medium text-popover-foreground">{user?.displayName || 'User'}</p>
+                        <p className="text-xs lg:text-sm font-medium text-popover-foreground capitalize">{user?.displayName || 'User'}</p>
                         <p className="text-xs lg:text-sm text-muted-foreground">{user?.email}</p>
                       </div>
 
@@ -189,7 +189,7 @@ const Navbar = () => {
                       {/* Logout Button */}
                       <button
                         onClick={handleLogout}
-                        className="flex items-center w-full px-3 lg:px-4 py-2 text-xs lg:text-sm text-popover-foreground hover:bg-accent transition-colors cursor-pointer"
+                          className="flex items-center w-full px-3 lg:px-4 py-2 text-xs lg:text-sm  transition-colors cursor-pointer text-red-600 hover:bg-red-50 hover:text-red-700"
                       >
                         <LogOut className="mr-2 lg:mr-3 h-3 w-3 lg:h-4 lg:w-4" />
                         Logout

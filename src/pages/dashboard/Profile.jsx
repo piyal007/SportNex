@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { User, Mail, Calendar, Camera, Award } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -105,7 +105,7 @@ const Profile = () => {
                   />
                 ) : (
                   <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center">
-                    <User className="w-8 h-8 lg:w-12 lg:h-12 text-gray-400" />
+                      <User className="w-8 h-8 lg:w-12 lg:h-12 text-gray-400" />
                   </div>
                 )}
               </div>
@@ -116,10 +116,10 @@ const Profile = () => {
 
             {/* User Info */}
             <div className="text-center sm:text-left">
-              <h2 className="text-2xl lg:text-3xl font-bold text-white">
+              <h2 className="text-2xl lg:text-3xl font-bold text-white capitalize">
                 {userProfile?.name || user?.displayName || 'User'}
               </h2>
-              <p className="text-emerald-100 mt-1 text-sm lg:text-base">
+              <p className="text-emerald-100 mt-1 text-sm lg:text-base capitalize">
                 {userProfile?.role || 'User'} Account
               </p>
               <div className="flex items-center justify-center sm:justify-start mt-2 text-emerald-100">
@@ -142,7 +142,7 @@ const Profile = () => {
                   <User className="w-5 h-5 text-gray-400 mr-3" />
                   <div>
                     <p className="text-sm text-gray-500">Full Name</p>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-gray-900 capitalize">
                       {userProfile?.name || user?.displayName || 'Not provided'}
                     </p>
                   </div>

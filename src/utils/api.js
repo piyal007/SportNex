@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -11,12 +12,22 @@ const api = axios.create({
 
 // Request interceptor to add auth token
 api.interceptors.request.use(
-  (config) => {
-    // Get token from localStorage or your auth context
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  async (config) => {
+    // Get fresh Firebase ID token
+    const auth = getAuth();
+    const user = auth.currentUser;
+    
+    if (user) {
+      try {
+        const token = await user.getIdToken();
+        config.headers.Authorization = `Bearer ${token}`;
+      } catch (error) {
+        console.error('Error getting Firebase ID token:', error);
+        // Remove any stale token from localStorage
+        localStorage.removeItem('authToken');
+      }
     }
+    
     return config;
   },
   (error) => {
@@ -31,10 +42,11 @@ api.interceptors.response.use(
   },
   (error) => {
     // Handle common errors
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 || error.response?.status === 403) {
       // Token expired or invalid
       localStorage.removeItem('authToken');
-      window.location.href = '/login';
+      // Don't redirect automatically, let the component handle it
+      console.error('Authentication error:', error.response?.data?.error || 'Unauthorized');
     }
     return Promise.reject(error);
   }

@@ -75,13 +75,13 @@ const BookingModal = ({ court, isOpen, onClose, onSubmit }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900">Book Court</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+            className="text-gray-400 hover:text-red-600 transition-colors cursor-pointer"
           >
             <X className="w-6 h-6" />
           </button>
@@ -96,10 +96,10 @@ const BookingModal = ({ court, isOpen, onClose, onSubmit }) => {
               className="w-24 h-24 rounded-lg object-cover"
             />
             <div className="flex-1">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">{court.name}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2 capitalize">{court.name}</h3>
               <div className="space-y-1 text-sm text-gray-600">
                 <div className="flex items-center">
-                  <span className="font-medium text-emerald-600">{court.type}</span>
+                  <span className="font-medium text-emerald-600 capitalize">{court.type}</span>
                 </div>
                 <div className="flex items-center">
                   <MapPin className="w-4 h-4 mr-1" />
@@ -142,7 +142,7 @@ const BookingModal = ({ court, isOpen, onClose, onSubmit }) => {
               type="text"
               value={court.type}
               readOnly
-              className="w-full p-3 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
+              className="w-full p-3 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed capitalize"
             />
           </div>
 

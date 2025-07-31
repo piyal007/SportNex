@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { ScaleLoader } from 'react-spinners';
-import { Calendar, Clock, MapPin, DollarSign, User, Check, X, Search } from 'lucide-react';
+import { Calendar, Clock, DollarSign, User, Check, X, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const ManageBookings = () => {

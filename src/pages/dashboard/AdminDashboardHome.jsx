@@ -1,65 +1,59 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'react-hot-toast';
 import { ScaleLoader } from 'react-spinners';
+import { userAPI, courtsAPI } from '@/utils/api';
 
 const AdminDashboardHome = () => {
   const { user } = useAuth();
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalMembers: 0,
-    totalCourts: 0,
-    loading: true
+
+  // TanStack Query for user statistics
+  const {
+    data: userStats,
+    isLoading: userStatsLoading,
+    isError: userStatsError,
+    error: userStatsErrorDetails
+  } = useQuery({
+    queryKey: ['admin', 'userStats'],
+    queryFn: async () => {
+      const response = await userAPI.getUserStats();
+      return response.data;
+    },
+    enabled: !!user, // Only run when user is available
+    staleTime: 5 * 60 * 1000, // Data is fresh for 5 minutes
+    retry: 2,
+    onError: (error) => {
+      console.error('Error fetching user statistics:', error);
+      toast.error('Failed to load user statistics');
+    }
   });
 
-  // Fetch admin statistics
-  const fetchAdminStats = async () => {
-    try {
-      if (!user) return;
-      
-      const token = await user.getIdToken();
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-      
-      // Fetch user statistics
-      const userStatsResponse = await fetch(`${API_BASE_URL}/api/users/stats/overview`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      // Fetch courts data to count total courts
-      const courtsResponse = await fetch(`${API_BASE_URL}/api/courts`, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (userStatsResponse.ok && courtsResponse.ok) {
-        const userStats = await userStatsResponse.json();
-        const courtsData = await courtsResponse.json();
-        
-        setStats({
-          totalUsers: userStats.totalUsers || 0,
-          totalMembers: userStats.totalMembers || 0,
-          totalCourts: courtsData.pagination?.total || courtsData.data?.length || 0,
-          loading: false
-        });
-      } else {
-        throw new Error('Failed to fetch statistics');
-      }
-    } catch (error) {
-      console.error('Error fetching admin statistics:', error);
-      toast.error('Failed to load statistics');
-      setStats(prev => ({ ...prev, loading: false }));
+  // TanStack Query for courts data
+  const {
+    data: courtsData,
+    isLoading: courtsLoading,
+    isError: courtsError,
+    error: courtsErrorDetails
+  } = useQuery({
+    queryKey: ['admin', 'courts'],
+    queryFn: async () => {
+      const response = await courtsAPI.getAllCourts();
+      return response.data;
+    },
+    enabled: !!user, // Only run when user is available
+    staleTime: 5 * 60 * 1000, // Data is fresh for 5 minutes
+    retry: 2,
+    onError: (error) => {
+      console.error('Error fetching courts data:', error);
+      toast.error('Failed to load courts data');
     }
-  };
+  });
 
-  useEffect(() => {
-    if (user) {
-      fetchAdminStats();
-    }
-  }, [user]);
+  // Calculate derived values
+  const isLoading = userStatsLoading || courtsLoading;
+  const totalUsers = userStats?.totalUsers || 0;
+  const totalMembers = userStats?.totalMembers || 0;
+  const totalCourts = courtsData?.pagination?.total || courtsData?.data?.length || 0;
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -102,10 +96,12 @@ const AdminDashboardHome = () => {
               <div>
                 <p className="text-blue-600 text-sm font-medium mb-1">Total Courts</p>
                 <p className="text-3xl font-bold text-blue-900 min-h-[2.25rem] flex items-center">
-                  {stats.loading ? (
+                  {courtsLoading ? (
                     <ScaleLoader color="#1e40af" height={20} width={3} radius={2} margin={2} />
+                  ) : courtsError ? (
+                    <span className="text-red-500 text-lg">Error</span>
                   ) : (
-                    stats.totalCourts
+                    totalCourts
                   )}
                 </p>
               </div>
@@ -123,16 +119,17 @@ const AdminDashboardHome = () => {
               <div>
                 <p className="text-green-600 text-sm font-medium mb-1">Total Users</p>
                 <p className="text-3xl font-bold text-green-900 min-h-[2.25rem] flex items-center">
-                  {stats.loading ? (
+                  {userStatsLoading ? (
                     <ScaleLoader color="#166534" height={20} width={3} radius={2} margin={2} />
+                  ) : userStatsError ? (
+                    <span className="text-red-500 text-lg">Error</span>
                   ) : (
-                    stats.totalUsers
+                    totalUsers
                   )}
                 </p>
               </div>
               <div className="bg-green-500 rounded-full p-3">
-                
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="text-white lucide lucide-users-icon lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white lucide lucide-users-icon lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>
               </div>
             </div>
           </div>
@@ -143,10 +140,12 @@ const AdminDashboardHome = () => {
               <div>
                 <p className="text-purple-600 text-sm font-medium mb-1">Total Members</p>
                 <p className="text-3xl font-bold text-purple-900 min-h-[2.25rem] flex items-center">
-                  {stats.loading ? (
+                  {userStatsLoading ? (
                     <ScaleLoader color="#581c87" height={20} width={3} radius={2} margin={2} />
+                  ) : userStatsError ? (
+                    <span className="text-red-500 text-lg">Error</span>
                   ) : (
-                    stats.totalMembers
+                    totalMembers
                   )}
                 </p>
               </div>

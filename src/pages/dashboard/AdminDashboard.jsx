@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import DashboardSidebar from '../../components/dashboard/DashboardSidebar';
-import DashboardHeader from '../../components/dashboard/DashboardHeader';
+import { useAuth } from '@/contexts/AuthContext';
+import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
+import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { ScaleLoader } from 'react-spinners';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';

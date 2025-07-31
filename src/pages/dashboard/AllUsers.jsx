@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ScaleLoader } from 'react-spinners';
 import { User, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const AllUsers = () => {
   const { user } = useAuth();

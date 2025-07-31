@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Megaphone, Calendar, User, AlertCircle, Plus, Trash2, Edit2, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';

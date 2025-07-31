@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { ScaleLoader } from 'react-spinners';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import Swal from 'sweetalert2';
 
 const initialCourt = { name: '', type: '', pricePerSession: '', capacity: '', location: '', image: '', availableSlots: '' };
@@ -65,8 +65,8 @@ const ManageCourts = () => {
       text: 'You won\'t be able to revert this!',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#10b981',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#10b981',
       confirmButtonText: 'Yes, delete it!'
     });
     if (!result.isConfirmed) return;
