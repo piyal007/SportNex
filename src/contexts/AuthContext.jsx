@@ -161,6 +161,7 @@ export const AuthProvider = ({ children }) => {
       // Clear user data and token
       setUserRole(null);
       setUserDoc(null);
+      
       localStorage.removeItem('authToken');
     } catch (error) {
       const friendlyMessage = getErrorMessage(error);

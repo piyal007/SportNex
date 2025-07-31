@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
+import { ScaleLoader } from 'react-spinners';
 
 const AdminDashboardHome = () => {
   const { user } = useAuth();
@@ -17,7 +18,7 @@ const AdminDashboardHome = () => {
       if (!user) return;
       
       const token = await user.getIdToken();
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
       
       // Fetch user statistics
       const userStatsResponse = await fetch(`${API_BASE_URL}/api/users/stats/overview`, {
@@ -74,7 +75,7 @@ const AdminDashboardHome = () => {
           <div className="flex-shrink-0">
             <img
               className="h-20 w-20 md:h-24 md:w-24 rounded-full object-cover border-4 border-emerald-100"
-              src={user?.photoURL || 'https://via.placeholder.com/150/10b981/ffffff?text=Admin'}
+              src={user?.photoURL || 'https://i.pravatar.cc/150?img=12'}
               alt={user?.displayName || 'Admin'}
             />
           </div>
@@ -100,9 +101,9 @@ const AdminDashboardHome = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-blue-600 text-sm font-medium mb-1">Total Courts</p>
-                <p className="text-3xl font-bold text-blue-900">
+                <p className="text-3xl font-bold text-blue-900 min-h-[2.25rem] flex items-center">
                   {stats.loading ? (
-                    <span className="animate-pulse">--</span>
+                    <ScaleLoader color="#1e40af" height={20} width={3} radius={2} margin={2} />
                   ) : (
                     stats.totalCourts
                   )}
@@ -121,9 +122,9 @@ const AdminDashboardHome = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-green-600 text-sm font-medium mb-1">Total Users</p>
-                <p className="text-3xl font-bold text-green-900">
+                <p className="text-3xl font-bold text-green-900 min-h-[2.25rem] flex items-center">
                   {stats.loading ? (
-                    <span className="animate-pulse">--</span>
+                    <ScaleLoader color="#166534" height={20} width={3} radius={2} margin={2} />
                   ) : (
                     stats.totalUsers
                   )}
@@ -142,9 +143,9 @@ const AdminDashboardHome = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-purple-600 text-sm font-medium mb-1">Total Members</p>
-                <p className="text-3xl font-bold text-purple-900">
+                <p className="text-3xl font-bold text-purple-900 min-h-[2.25rem] flex items-center">
                   {stats.loading ? (
-                    <span className="animate-pulse">--</span>
+                    <ScaleLoader color="#581c87" height={20} width={3} radius={2} margin={2} />
                   ) : (
                     stats.totalMembers
                   )}

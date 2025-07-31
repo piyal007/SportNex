@@ -22,7 +22,7 @@ const Announcements = () => {
   const fetchAnnouncements = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/api/announcements');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/announcements`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch announcements');
@@ -50,7 +50,7 @@ const Announcements = () => {
     try {
       const token = await user.getIdToken();
       const method = editingId ? 'PUT' : 'POST';
-      const url = editingId ? `http://localhost:3000/api/announcements/${editingId}` : 'http://localhost:3000/api/announcements';
+      const url = editingId ? `${import.meta.env.VITE_API_BASE_URL}/api/announcements/${editingId}` : `${import.meta.env.VITE_API_BASE_URL}/api/announcements`;
       const res = await fetch(url, {
         method,
         headers: {
@@ -105,7 +105,7 @@ const Announcements = () => {
 
     try {
       const token = await user.getIdToken();
-      const res = await fetch(`http://localhost:3000/api/announcements/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/announcements/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

@@ -22,7 +22,7 @@ const AdminDashboard = () => {
       if (!user) return;
       
       const token = await user.getIdToken();
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
       
       // Fetch user statistics
       const userStatsResponse = await fetch(`${API_BASE_URL}/api/users/stats/overview`, {
