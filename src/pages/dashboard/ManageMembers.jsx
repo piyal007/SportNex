@@ -3,6 +3,7 @@ import { ScaleLoader } from 'react-spinners';
 import { User, X, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../contexts/AuthContext';
+import Swal from 'sweetalert2';
 
 const ManageMembers = () => {
   const { user } = useAuth();
@@ -39,27 +40,42 @@ const ManageMembers = () => {
   };
 
   const handleDelete = async (memberId) => {
-    if (!window.confirm('Are you sure you want to delete this member?')) return;
-    setDeletingId(memberId);
-    try {
-      const token = await user.getIdToken();
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/members/${memberId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    });
+
+    if (result.isConfirmed) {
+      setDeletingId(memberId);
+      try {
+        const token = await user.getIdToken();
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/members/${memberId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          await Swal.fire({
+            title: "Deleted!",
+            text: "Member has been deleted successfully.",
+            icon: "success"
+          });
+          setMembers(prev => prev.filter(m => m._id !== memberId));
+        } else {
+          toast.error('Failed to delete member');
         }
-      });
-      if (response.ok) {
-        toast.success('Member deleted successfully');
-        setMembers(prev => prev.filter(m => m._id !== memberId));
-      } else {
-        toast.error('Failed to delete member');
+      } catch (error) {
+        toast.error('Error deleting member');
       }
-    } catch (error) {
-      toast.error('Error deleting member');
+      setDeletingId(null);
     }
-    setDeletingId(null);
   };
 
   const filteredMembers = members.filter(member =>
