@@ -1,41 +1,156 @@
-import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Plus, Edit, Trash2, Loader2, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import { ScaleLoader } from 'react-spinners';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
 
 const initialCourt = { name: '', type: '', pricePerSession: '', capacity: '', location: '', image: '', availableSlots: '' };
 
 const ManageCourts = () => {
   const { user } = useAuth();
-  const [courts, setCourts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [modalOpen, setModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [courtForm, setCourtForm] = useState(initialCourt);
-  const [submitting, setSubmitting] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
-  useEffect(() => {
-    fetchCourts();
-  }, []);
-
-  const fetchCourts = async () => {
-    setLoading(true);
-    try {
+  // Fetch courts with TanStack Query
+  const {
+    data: courts = [],
+    isLoading,
+    error,
+    refetch
+  } = useQuery({
+    queryKey: ['courts'],
+    queryFn: async () => {
       const token = await user.getIdToken();
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/courts`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      
+      if (!res.ok) {
+        throw new Error('Failed to fetch courts');
+      }
+      
       const data = await res.json();
-      setCourts(data.data || []);
-    } catch (err) {
+      return data.data || [];
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    onError: (error) => {
       toast.error('Failed to load courts');
-    } finally {
-      setLoading(false);
+      console.error('Error fetching courts:', error);
     }
-  };
+  });
+
+  // Add court mutation
+  const addCourtMutation = useMutation({
+    mutationFn: async (courtData) => {
+      const token = await user.getIdToken();
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/courts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(courtData)
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to add court');
+      }
+      
+      return res.json();
+    },
+    onSuccess: () => {
+      toast.success('Court added successfully');
+      setModalOpen(false);
+      setCourtForm(initialCourt);
+      queryClient.invalidateQueries({ queryKey: ['courts'] });
+    },
+    onError: (error) => {
+      toast.error('Failed to add court');
+      console.error('Error adding court:', error);
+    }
+  });
+
+  // Update court mutation
+  const updateCourtMutation = useMutation({
+    mutationFn: async ({ id, courtData }) => {
+      const token = await user.getIdToken();
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/courts/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(courtData)
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to update court');
+      }
+      
+      return res.json();
+    },
+    onSuccess: () => {
+      toast.success('Court updated successfully');
+      setModalOpen(false);
+      setCourtForm(initialCourt);
+      setSelectedId(null);
+      queryClient.invalidateQueries({ queryKey: ['courts'] });
+    },
+    onError: (error) => {
+      toast.error('Failed to update court');
+      console.error('Error updating court:', error);
+    }
+  });
+
+  // Delete court mutation
+  const deleteCourtMutation = useMutation({
+    mutationFn: async (id) => {
+      const token = await user.getIdToken();
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/courts/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to delete court');
+      }
+      
+      return res.json();
+    },
+    onMutate: async (deletedId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['courts'] });
+      
+      // Snapshot the previous value
+      const previousCourts = queryClient.getQueryData(['courts']);
+      
+      // Optimistically update to the new value
+      queryClient.setQueryData(['courts'], (old) => 
+        old?.filter(court => court._id !== deletedId) || []
+      );
+      
+      return { previousCourts };
+    },
+    onSuccess: () => {
+      toast.success('Court deleted successfully');
+    },
+    onError: (error, deletedId, context) => {
+      // Rollback on error
+      queryClient.setQueryData(['courts'], context.previousCourts);
+      toast.error('Failed to delete court');
+      console.error('Error deleting court:', error);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['courts'] });
+    }
+  });
 
   const openAddModal = () => {
     setCourtForm(initialCourt);
@@ -69,24 +184,9 @@ const ManageCourts = () => {
       cancelButtonColor: '#10b981',
       confirmButtonText: 'Yes, delete it!'
     });
-    if (!result.isConfirmed) return;
-    setSubmitting(true);
-    try {
-      const token = await user.getIdToken();
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/courts/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        toast.success('Court deleted');
-        fetchCourts();
-      } else {
-        toast.error('Failed to delete court');
-      }
-    } catch {
-      toast.error('Error deleting court');
-    } finally {
-      setSubmitting(false);
+    
+    if (result.isConfirmed) {
+      deleteCourtMutation.mutate(id);
     }
   };
 
@@ -96,44 +196,42 @@ const ManageCourts = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
-    try {
-      const token = await user.getIdToken();
-      const url = editMode
-        ? `${import.meta.env.VITE_API_BASE_URL}/api/courts/${selectedId}`
-        : `${import.meta.env.VITE_API_BASE_URL}/api/courts`;
-      const method = editMode ? 'PUT' : 'POST';
-      // Prepare backend-compatible payload
-      const payload = {
-        name: courtForm.name,
-        type: courtForm.type,
-        pricePerSession: courtForm.pricePerSession,
-        capacity: courtForm.capacity,
-        location: courtForm.location,
-        image: courtForm.image,
-        availableSlots: courtForm.availableSlots.split(',').map(s => s.trim()).filter(Boolean)
-      };
-      const res = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
-      if (res.ok) {
-        toast.success(editMode ? 'Court updated' : 'Court added');
-        setModalOpen(false);
-        fetchCourts();
-      } else {
-        toast.error('Failed to save court');
-      }
-    } catch {
-      toast.error('Error saving court');
-    } finally {
-      setSubmitting(false);
+    
+    // Prepare backend-compatible payload
+    const payload = {
+      name: courtForm.name,
+      type: courtForm.type,
+      pricePerSession: courtForm.pricePerSession,
+      capacity: courtForm.capacity,
+      location: courtForm.location,
+      image: courtForm.image,
+      availableSlots: courtForm.availableSlots.split(',').map(s => s.trim()).filter(Boolean)
+    };
+
+    if (editMode) {
+      updateCourtMutation.mutate({ id: selectedId, courtData: payload });
+    } else {
+      addCourtMutation.mutate(payload);
     }
   };
+
+  const isSubmitting = addCourtMutation.isPending || updateCourtMutation.isPending;
+
+  if (error) {
+    return (
+      <div className="p-2 sm:p-4 max-w-7xl mx-auto">
+        <div className="text-center py-8">
+          <p className="text-red-600 mb-4">Error loading courts: {error.message}</p>
+          <button
+            onClick={() => refetch()}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg cursor-pointer"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-2 sm:p-4 max-w-7xl mx-auto">
@@ -141,14 +239,25 @@ const ManageCourts = () => {
         <h2 className="text-2xl font-extrabold flex items-center gap-2 text-emerald-700">
           <CheckCircle className="w-7 h-7" /> Manage Courts
         </h2>
-        <button
-          className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition cursor-pointer"
-          onClick={openAddModal}
-        >
-          <Plus className="w-5 h-5" /> Add Court
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => refetch()}
+            className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition cursor-pointer"
+            disabled={isLoading}
+          >
+            <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+          <button
+            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition cursor-pointer"
+            onClick={openAddModal}
+          >
+            <Plus className="w-5 h-5" /> Add Court
+          </button>
+        </div>
       </div>
-      {loading ? (
+
+      {isLoading ? (
         <div className="flex justify-center items-center h-40">
           <ScaleLoader color="#10b981" />
         </div>
@@ -187,6 +296,7 @@ const ManageCourts = () => {
                         className="p-2 rounded hover:bg-emerald-200 text-emerald-700 cursor-pointer"
                         onClick={() => openEditModal(court)}
                         title="Edit"
+                        disabled={deleteCourtMutation.isPending}
                       >
                         <Edit className="w-5 h-5" />
                       </button>
@@ -194,9 +304,12 @@ const ManageCourts = () => {
                         className="p-2 rounded hover:bg-red-200 text-red-600 cursor-pointer"
                         onClick={() => handleDelete(court._id)}
                         title="Delete"
-                        disabled={submitting}
+                        disabled={deleteCourtMutation.isPending}
                       >
-                        {submitting && selectedId === court._id ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
+                        {deleteCourtMutation.isPending && deleteCourtMutation.variables === court._id ? 
+                          <Loader2 className="w-5 h-5 animate-spin" /> : 
+                          <Trash2 className="w-5 h-5" />
+                        }
                       </button>
                     </td>
                   </tr>
@@ -206,6 +319,7 @@ const ManageCourts = () => {
           </table>
         </div>
       )}
+
       {/* Modal for Add/Edit Court */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
@@ -213,6 +327,7 @@ const ManageCourts = () => {
             <button
               className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 cursor-pointer"
               onClick={() => setModalOpen(false)}
+              disabled={isSubmitting}
             >
               <XCircle className="w-6 h-6" />
             </button>
@@ -228,6 +343,7 @@ const ManageCourts = () => {
                 onChange={handleFormChange}
                 className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-200"
                 required
+                disabled={isSubmitting}
               />
               <input
                 type="text"
@@ -237,6 +353,7 @@ const ManageCourts = () => {
                 onChange={handleFormChange}
                 className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-200"
                 required
+                disabled={isSubmitting}
               />
               <input
                 type="number"
@@ -246,6 +363,7 @@ const ManageCourts = () => {
                 onChange={handleFormChange}
                 className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-200"
                 required
+                disabled={isSubmitting}
               />
               <input
                 type="number"
@@ -255,6 +373,7 @@ const ManageCourts = () => {
                 onChange={handleFormChange}
                 className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-200"
                 required
+                disabled={isSubmitting}
               />
               <input
                 type="text"
@@ -264,6 +383,7 @@ const ManageCourts = () => {
                 onChange={handleFormChange}
                 className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-200"
                 required
+                disabled={isSubmitting}
               />
               <input
                 type="text"
@@ -273,6 +393,7 @@ const ManageCourts = () => {
                 onChange={handleFormChange}
                 className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-200"
                 required
+                disabled={isSubmitting}
               />
               <input
                 type="text"
@@ -282,13 +403,14 @@ const ManageCourts = () => {
                 onChange={handleFormChange}
                 className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-emerald-200"
                 required
+                disabled={isSubmitting}
               />
               <button
                 type="submit"
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg transition cursor-pointer flex items-center justify-center gap-2"
-                disabled={submitting}
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg transition cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isSubmitting}
               >
-                {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (editMode ? <Edit className="w-5 h-5" /> : <Plus className="w-5 h-5" />)}
+                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (editMode ? <Edit className="w-5 h-5" /> : <Plus className="w-5 h-5" />)}
                 {editMode ? 'Update Court' : 'Add Court'}
               </button>
             </form>

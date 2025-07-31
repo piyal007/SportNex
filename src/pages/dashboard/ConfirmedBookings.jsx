@@ -1,23 +1,23 @@
-import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { ScaleLoader } from 'react-spinners';
-import { Calendar, Clock, MapPin, DollarSign, CheckCircle, Receipt } from 'lucide-react';
+import { Calendar, Clock, MapPin, DollarSign, CheckCircle, Receipt, RefreshCw } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 const ConfirmedBookings = () => {
   const { user } = useAuth();
-  const [confirmedBookings, setConfirmedBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchConfirmedBookings();
-  }, [user]);
-
-  const fetchConfirmedBookings = async () => {
-    if (!user) return;
-
-    try {
-      setLoading(true);
+  // Fetch confirmed bookings with TanStack Query
+  const {
+    data: confirmedBookings = [],
+    isLoading,
+    error,
+    refetch
+  } = useQuery({
+    queryKey: ['confirmedBookings', user?.uid],
+    queryFn: async () => {
+      if (!user) throw new Error('User not authenticated');
+      
       const token = await user.getIdToken();
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/bookings/confirmed/${user.uid}`, {
         method: 'GET',
@@ -27,20 +27,21 @@ const ConfirmedBookings = () => {
         },
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setConfirmedBookings(data);
-      } else {
-        console.error('Failed to fetch confirmed bookings');
-        toast.error('Failed to load confirmed bookings');
+      if (!response.ok) {
+        throw new Error('Failed to fetch confirmed bookings');
       }
-    } catch (error) {
+
+      const data = await response.json();
+      return data || [];
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    onError: (error) => {
+      toast.error('Failed to load confirmed bookings');
       console.error('Error fetching confirmed bookings:', error);
-      toast.error('Error loading confirmed bookings');
-    } finally {
-      setLoading(false);
     }
-  };
+  });
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -69,7 +70,25 @@ const ConfirmedBookings = () => {
     });
   };
 
-  if (loading) {
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="text-center py-8">
+            <p className="text-red-600 mb-4">Error loading confirmed bookings: {error.message}</p>
+            <button
+              onClick={() => refetch()}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg cursor-pointer"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] bg-white rounded-lg shadow-sm">
         <ScaleLoader color="#059669" height={40} width={4} />
@@ -82,16 +101,26 @@ const ConfirmedBookings = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex items-center space-x-3">
-          <div className="bg-emerald-100 p-3 rounded-full">
-            <CheckCircle className="w-6 h-6 text-emerald-600" />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center space-x-3">
+            <div className="bg-emerald-100 p-3 rounded-full">
+              <CheckCircle className="w-6 h-6 text-emerald-600" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Confirmed Bookings</h1>
+              <p className="text-gray-600 mt-1">
+                Your confirmed bookings after successful payment.
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Confirmed Bookings</h1>
-            <p className="text-gray-600 mt-1">
-              Your confirmed bookings after successful payment.
-            </p>
-          </div>
+          <button
+            onClick={() => refetch()}
+            className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition cursor-pointer"
+            disabled={isLoading}
+          >
+            <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
         </div>
       </div>
 

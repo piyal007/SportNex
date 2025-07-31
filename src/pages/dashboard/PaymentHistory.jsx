@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { ScaleLoader } from 'react-spinners';
 import { 
@@ -12,30 +13,29 @@ import {
   Filter,
   Download,
   CheckCircle,
-  Clock
+  Clock,
+  RefreshCw,
+  X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const PaymentHistory = () => {
   const { user } = useAuth();
-  const [payments, setPayments] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('table'); // 'table' or 'card'
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
 
-  useEffect(() => {
-    fetchPaymentHistory();
-  }, [user, currentPage]);
-
-  const fetchPaymentHistory = async () => {
-    if (!user) return;
-
-    try {
-      setLoading(true);
+  // Fetch payment history with TanStack Query
+  const {
+    data: paymentData,
+    isLoading,
+    error,
+    refetch
+  } = useQuery({
+    queryKey: ['paymentHistory', user?.uid, currentPage],
+    queryFn: async () => {
       const token = await user.getIdToken();
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/api/payments/history?page=${currentPage}&limit=${itemsPerPage}`,
@@ -48,19 +48,22 @@ const PaymentHistory = () => {
       );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch payment history');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch payment history');
       }
 
-      const data = await response.json();
-      setPayments(data.payments || []);
-      setTotalPages(data.pagination?.pages || 1);
-    } catch (error) {
-      console.error('Error fetching payment history:', error);
-      toast.error('Failed to load payment history');
-    } finally {
-      setLoading(false);
+      return response.json();
+    },
+    enabled: !!user?.uid,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    onError: (error) => {
+      toast.error(error.message || 'Failed to load payment history');
     }
-  };
+  });
+
+  const payments = paymentData?.payments || [];
+  const totalPages = paymentData?.pagination?.pages || 1;
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -121,10 +124,38 @@ const PaymentHistory = () => {
     setCurrentPage(page);
   };
 
-  if (loading) {
+  // Error state
+  if (error) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <ScaleLoader color="#10b981" />
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-col items-center justify-center min-h-[400px] bg-gradient-to-br from-red-50 to-white rounded-xl border border-red-100">
+          <div className="bg-red-100 rounded-full p-6 w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+            <X className="w-12 h-12 text-red-500" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-3">Error Loading Payment History</h3>
+          <p className="text-gray-600 mb-6 text-center max-w-md">
+            {error.message || 'Failed to load payment history. Please try again.'}
+          </p>
+          <button
+            onClick={() => refetch()}
+            className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
+          >
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-col items-center justify-center min-h-[400px] bg-gradient-to-br from-emerald-50 to-white rounded-xl border border-emerald-100">
+          <ScaleLoader color="#059669" height={40} width={4} />
+          <p className="mt-4 text-gray-700 font-medium">Loading payment history...</p>
+        </div>
       </div>
     );
   }
@@ -133,13 +164,25 @@ const PaymentHistory = () => {
     <div className="p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Payment History</h1>
-        <p className="text-gray-600">View all your payment transactions and receipts</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Payment History</h1>
+            <p className="text-gray-600">View all your payment transactions and receipts</p>
+          </div>
+          <button
+            onClick={() => refetch()}
+            className="flex items-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors cursor-pointer"
+            title="Refresh payment history"
+          >
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* Controls */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
           {/* Search and Filter */}
           <div className="flex flex-col sm:flex-row gap-3 flex-1">
             <div className="relative">
@@ -175,7 +218,7 @@ const PaymentHistory = () => {
               }`}
             >
               <List className="w-4 h-4" />
-              Table
+              <span className="hidden sm:inline">Table</span>
             </button>
             <button
               onClick={() => setViewMode('card')}
@@ -186,7 +229,7 @@ const PaymentHistory = () => {
               }`}
             >
               <Grid3X3 className="w-4 h-4" />
-              Cards
+              <span className="hidden sm:inline">Cards</span>
             </button>
           </div>
         </div>
@@ -208,22 +251,22 @@ const PaymentHistory = () => {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Transaction
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Court & Date
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Time Slots
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Amount
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Date
                       </th>
                     </tr>
@@ -231,31 +274,31 @@ const PaymentHistory = () => {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {filteredPayments.map((payment) => (
                       <tr key={payment._id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <CreditCard className="w-5 h-5 text-gray-400 mr-3" />
                             <div>
-                              <div className="text-sm font-medium text-gray-900">
+                              <div className="text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-none">
                                 {payment.transactionId}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-gray-500 truncate max-w-[120px] sm:max-w-none">
                                 {payment.email}
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900 capitalize">
                             {payment.courtType || 'Standard Court'}
                           </div>
                           <div className="text-sm text-gray-500">
                             {new Date(payment.date).toLocaleDateString()}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="hidden md:table-cell px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {formatTimeSlots(payment.slots)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
                             {formatCurrency(payment.finalPrice)}
                           </div>
@@ -265,10 +308,10 @@ const PaymentHistory = () => {
                             </div>
                           )}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           {getStatusBadge(payment.status)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="hidden lg:table-cell px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {formatDate(payment.createdAt)}
                         </td>
                       </tr>
@@ -279,17 +322,17 @@ const PaymentHistory = () => {
             </div>
           ) : (
             /* Card View */
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               {filteredPayments.map((payment) => (
-                <div key={payment._id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div key={payment._id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center">
-                      <CreditCard className="w-8 h-8 text-emerald-600 mr-3" />
+                      <CreditCard className="w-6 sm:w-8 h-6 sm:h-8 text-emerald-600 mr-3" />
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 capitalize">
                           {payment.courtType || 'Standard Court'}
                         </h3>
-                        <p className="text-sm text-gray-500">{payment.email}</p>
+                        <p className="text-sm text-gray-500 truncate max-w-[150px]">{payment.email}</p>
                       </div>
                     </div>
                     {getStatusBadge(payment.status)}
@@ -298,7 +341,7 @@ const PaymentHistory = () => {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">Transaction ID:</span>
-                      <span className="text-sm font-medium text-gray-900 truncate ml-2">
+                      <span className="text-sm font-medium text-gray-900 truncate ml-2 max-w-[120px]">
                         {payment.transactionId}
                       </span>
                     </div>
@@ -312,7 +355,7 @@ const PaymentHistory = () => {
 
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">Time Slots:</span>
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-gray-900 text-right">
                         {formatTimeSlots(payment.slots)}
                       </span>
                     </div>
@@ -353,7 +396,7 @@ const PaymentHistory = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-6 flex items-center justify-between">
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-sm text-gray-700">
                 Showing page {currentPage} of {totalPages}
               </div>
@@ -365,8 +408,18 @@ const PaymentHistory = () => {
                 >
                   Previous
                 </button>
-                {[...Array(totalPages)].map((_, index) => {
-                  const page = index + 1;
+                {[...Array(Math.min(5, totalPages))].map((_, index) => {
+                  let page;
+                  if (totalPages <= 5) {
+                    page = index + 1;
+                  } else if (currentPage <= 3) {
+                    page = index + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    page = totalPages - 4 + index;
+                  } else {
+                    page = currentPage - 2 + index;
+                  }
+                  
                   return (
                     <button
                       key={page}

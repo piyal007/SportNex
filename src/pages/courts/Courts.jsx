@@ -1,77 +1,66 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, MapPin, Users, Star } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Clock, MapPin, Users, Star, RefreshCw } from 'lucide-react';
 import BookingModal from './components/BookingModal';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'react-hot-toast';
 
 const Courts = () => {
-  const [courts, setCourts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedCourt, setSelectedCourt] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState('card'); // 'card' or 'table'
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const courtsPerPage = viewMode === 'card' ? 6 : 10;
-
-  // Reset to first page when view mode changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [viewMode]);
-
-  // Mock data - replace with actual API call
 
   // API base URL
   const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
-  useEffect(() => {
-    const fetchCourts = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${API_BASE_URL}/courts?limit=100`); // Get all courts for client-side pagination
-        const result = await response.json();
+  // Fetch courts using TanStack Query
+  const {
+    data: courts = [],
+    isLoading,
+    isError,
+    error,
+    refetch
+  } = useQuery({
+    queryKey: ['courts'],
+    queryFn: async () => {
+      const response = await fetch(`${API_BASE_URL}/courts?limit=100`);
+      const result = await response.json();
 
-        if (result.success && result.data) {
-          // Transform MongoDB data to match frontend expectations
-          const transformedCourts = result.data.map(court => ({
-            ...court,
-            id: court._id // Add id field for compatibility
-          }));
-          setCourts(transformedCourts);
-        } else {
-          throw new Error(result.error || 'Failed to fetch courts');
-        }
-      } catch (error) {
-        console.error('Error fetching courts:', error);
-        toast.error('Failed to load courts');
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to fetch courts');
       }
-    };
 
-    fetchCourts();
-  }, []);
-
-  const handleBookNow = (court) => {
-    if (!user) {
-      toast.error('Please login to book a court');
-      navigate('/login');
-      return;
+      if (result.success && result.data) {
+        // Transform MongoDB data to match frontend expectations
+        return result.data.map(court => ({
+          ...court,
+          id: court._id // Add id field for compatibility
+        }));
+      } else {
+        throw new Error(result.error || 'Failed to fetch courts');
+      }
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    onError: (error) => {
+      console.error('Error fetching courts:', error);
+      toast.error('Failed to load courts');
     }
-    setSelectedCourt(court);
-    setIsModalOpen(true);
-  };
+  });
 
-  const handleBookingSubmit = async (bookingData) => {
-    try {
+  // Booking submission mutation
+  const bookingMutation = useMutation({
+    mutationFn: async (bookingData) => {
       if (!user) {
-        toast.error('Please log in to make a booking');
-        navigate('/login');
-        return;
+        throw new Error('Please log in to make a booking');
       }
 
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/bookings`, {
@@ -88,19 +77,52 @@ const Courts = () => {
         })
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        toast.success('Booking request submitted! Waiting for admin approval.');
-        setIsModalOpen(false);
-        setSelectedCourt(null);
-      } else {
+      if (!response.ok) {
         const errorData = await response.json();
-        toast.error(errorData.error || 'Failed to submit booking request');
+        throw new Error(errorData.error || 'Failed to submit booking request');
       }
-    } catch (error) {
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast.success('Booking request submitted! Waiting for admin approval.');
+      setIsModalOpen(false);
+      setSelectedCourt(null);
+      // Optionally invalidate related queries
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+    },
+    onError: (error) => {
       console.error('Error submitting booking:', error);
-      toast.error('Failed to submit booking request');
+      if (error.message === 'Please log in to make a booking') {
+        toast.error(error.message);
+        navigate('/login');
+      } else {
+        toast.error(error.message || 'Failed to submit booking request');
+      }
     }
+  });
+
+  // Reset to first page when view mode changes
+  useState(() => {
+    setCurrentPage(1);
+  }, [viewMode]);
+
+  const handleBookNow = (court) => {
+    if (!user) {
+      toast.error('Please login to book a court');
+      navigate('/login');
+      return;
+    }
+    setSelectedCourt(court);
+    setIsModalOpen(true);
+  };
+
+  const handleBookingSubmit = (bookingData) => {
+    bookingMutation.mutate(bookingData);
+  };
+
+  const handleRefresh = () => {
+    refetch();
   };
 
   // Pagination logic
@@ -143,7 +165,7 @@ const Courts = () => {
   };
 
   const renderCardView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
       {currentCourts.map((court) => (
         <div key={court.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
           <div className="relative">
@@ -158,32 +180,32 @@ const Courts = () => {
             </div>
           </div>
 
-          <div className="p-4">
+          <div className="p-3 md:p-4">
             <div className="flex justify-between items-start mb-2">
-              <h3 className="text-lg font-semibold text-gray-900">{court.name}</h3>
+              <h3 className="text-base md:text-lg font-semibold text-gray-900">{court.name}</h3>
               <div className="flex items-center space-x-1">
                 {renderStars(court.rating)}
-                <span className="text-sm text-gray-600 ml-1">{court.rating}</span>
+                <span className="text-xs md:text-sm text-gray-600 ml-1">{court.rating}</span>
               </div>
             </div>
 
-            <p className="text-emerald-600 font-medium mb-2 capitalize">{court.type}</p>
+            <p className="text-emerald-600 font-medium mb-2 capitalize text-sm md:text-base">{court.type}</p>
 
-            <div className="flex items-center text-gray-600 text-sm mb-2">
-              <MapPin className="w-4 h-4 mr-1" />
+            <div className="flex items-center text-gray-600 text-xs md:text-sm mb-2">
+              <MapPin className="w-3 h-3 md:w-4 md:h-4 mr-1" />
               <span>{court.location}</span>
             </div>
 
-            <div className="flex items-center text-gray-600 text-sm mb-3">
-              <Users className="w-4 h-4 mr-1" />
+            <div className="flex items-center text-gray-600 text-xs md:text-sm mb-3">
+              <Users className="w-3 h-3 md:w-4 md:h-4 mr-1" />
               <span>Capacity: {court.capacity} people</span>
             </div>
 
             <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                 Available Slots
               </label>
-              <select className="w-full p-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500">
+              <select className="w-full p-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500 text-sm">
                 <option value="">Select a time slot</option>
                 {court.availableSlots.map((slot, index) => (
                   <option key={index} value={slot}>
@@ -195,9 +217,10 @@ const Courts = () => {
 
             <button
               onClick={() => handleBookNow(court)}
-              className="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 transition-colors duration-200 font-medium cursor-pointer"
+              disabled={bookingMutation.isLoading}
+              className="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 transition-colors duration-200 font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
             >
-              Book Now
+              {bookingMutation.isLoading ? 'Booking...' : 'Book Now'}
             </button>
           </div>
         </div>
@@ -211,25 +234,25 @@ const Courts = () => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Court
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Type
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Location
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Price
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Rating
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Available Slots
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Action
               </th>
             </tr>
@@ -237,39 +260,39 @@ const Courts = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {currentCourts.map((court) => (
               <tr key={court.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-3 md:px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <img
                       src={court.image}
                       alt={court.name}
-                      className="w-12 h-12 rounded-lg object-cover mr-3"
+                      className="w-10 h-10 md:w-12 md:h-12 rounded-lg object-cover mr-2 md:mr-3"
                       loading="lazy"
                     />
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{court.name}</div>
-                      <div className="text-sm text-gray-500">Capacity: {court.capacity}</div>
+                      <div className="text-xs md:text-sm font-medium text-gray-900">{court.name}</div>
+                      <div className="text-xs text-gray-500">Capacity: {court.capacity}</div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-3 md:px-6 py-4 whitespace-nowrap">
                   <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 capitalize">
                     {court.type}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-3 md:px-6 py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
                   {court.location}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="px-3 md:px-6 py-4 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900">
                   ${court.pricePerSession}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-3 md:px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     {renderStars(court.rating)}
-                    <span className="text-sm text-gray-600 ml-1">{court.rating}</span>
+                    <span className="text-xs md:text-sm text-gray-600 ml-1">{court.rating}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <select className="p-1 border border-gray-300 rounded text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                <td className="px-3 md:px-6 py-4 whitespace-nowrap">
+                  <select className="p-1 border border-gray-300 rounded text-xs md:text-sm focus:ring-emerald-500 focus:border-emerald-500">
                     <option value="">Select slot</option>
                     {court.availableSlots.map((slot, index) => (
                       <option key={index} value={slot}>
@@ -278,12 +301,13 @@ const Courts = () => {
                     ))}
                   </select>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-3 md:px-6 py-4 whitespace-nowrap">
                   <button
                     onClick={() => handleBookNow(court)}
-                    className="bg-emerald-600 text-white px-3 py-1 rounded-md hover:bg-emerald-700 transition-colors duration-200 text-sm font-medium cursor-pointer"
+                    disabled={bookingMutation.isLoading}
+                    className="bg-emerald-600 text-white px-2 md:px-3 py-1 rounded-md hover:bg-emerald-700 transition-colors duration-200 text-xs md:text-sm font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Book Now
+                    {bookingMutation.isLoading ? 'Booking...' : 'Book Now'}
                   </button>
                 </td>
               </tr>
@@ -295,15 +319,15 @@ const Courts = () => {
   );
 
   const renderPagination = () => (
-    <div className="flex items-center justify-between mt-6">
-      <div className="text-sm text-gray-700">
+    <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4">
+      <div className="text-xs md:text-sm text-gray-700">
         Showing {startIndex + 1} to {Math.min(endIndex, courts.length)} of {courts.length} courts
       </div>
-      <div className="flex space-x-2">
+      <div className="flex space-x-1 md:space-x-2">
         <button
           onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="px-3 py-1 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 cursor-pointer"
+          className="px-2 md:px-3 py-1 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 cursor-pointer text-xs md:text-sm"
         >
           Previous
         </button>
@@ -311,7 +335,7 @@ const Courts = () => {
           <button
             key={index + 1}
             onClick={() => setCurrentPage(index + 1)}
-            className={`px-3 py-1 border rounded-md cursor-pointer ${currentPage === index + 1
+            className={`px-2 md:px-3 py-1 border rounded-md cursor-pointer text-xs md:text-sm ${currentPage === index + 1
               ? 'bg-emerald-600 text-white border-emerald-600'
               : 'border-gray-300 hover:bg-gray-50'
               }`}
@@ -322,7 +346,7 @@ const Courts = () => {
         <button
           onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className="px-3 py-1 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 cursor-pointer"
+          className="px-2 md:px-3 py-1 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 cursor-pointer text-xs md:text-sm"
         >
           Next
         </button>
@@ -330,7 +354,30 @@ const Courts = () => {
     </div>
   );
 
-  if (loading) {
+  // Error state
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+              <h3 className="text-lg font-medium text-red-800 mb-2">Error Loading Courts</h3>
+              <p className="text-red-600 mb-4">{error?.message || 'Failed to load courts'}</p>
+              <button
+                onClick={handleRefresh}
+                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-200 cursor-pointer"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner />
@@ -339,27 +386,37 @@ const Courts = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-4 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 md:mb-4">
             Available Courts
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
             Book your favorite court and enjoy premium sports facilities
           </p>
         </div>
 
-        {/* View Toggle */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="text-sm text-gray-600">
-            {courts.length} courts available
+        {/* View Toggle and Refresh */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4 md:mb-6 gap-4">
+          <div className="flex items-center gap-4">
+            <div className="text-xs md:text-sm text-gray-600">
+              {courts.length} courts available
+            </div>
+            <button
+              onClick={handleRefresh}
+              disabled={isLoading}
+              className="flex items-center gap-2 px-3 py-1 text-xs md:text-sm text-emerald-600 hover:text-emerald-700 cursor-pointer disabled:opacity-50"
+            >
+              <RefreshCw className={`w-3 h-3 md:w-4 md:h-4 ${isLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
           </div>
           <div className="flex space-x-2">
             <button
               onClick={() => setViewMode('card')}
-              className={`px-4 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors ${viewMode === 'card'
+              className={`px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-medium cursor-pointer transition-colors ${viewMode === 'card'
                 ? 'bg-emerald-600 text-white'
                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
@@ -368,7 +425,7 @@ const Courts = () => {
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`px-4 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors ${viewMode === 'table'
+              className={`px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-medium cursor-pointer transition-colors ${viewMode === 'table'
                 ? 'bg-emerald-600 text-white'
                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
@@ -379,10 +436,20 @@ const Courts = () => {
         </div>
 
         {/* Courts Display */}
-        {viewMode === 'card' ? renderCardView() : renderTableView()}
-
-        {/* Pagination */}
-        {renderPagination()}
+        {courts.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="bg-gray-100 rounded-lg p-8">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Courts Available</h3>
+              <p className="text-gray-600">There are currently no courts available for booking.</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {viewMode === 'card' ? renderCardView() : renderTableView()}
+            {/* Pagination */}
+            {renderPagination()}
+          </>
+        )}
 
         {/* Booking Modal */}
         {isModalOpen && selectedCourt && (
