@@ -54,7 +54,6 @@ const AdminSetup = () => {
             const response = await api.post('/api/setup/admin', setupData);
             
             toast.success('Admin account created successfully!');
-            console.log('Admin setup completed:', response.data);
             
             // Redirect to home page (dashboard will be rebuilt)
       navigate('/');

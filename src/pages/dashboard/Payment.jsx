@@ -349,7 +349,7 @@ const PaymentForm = ({ booking, fromPath }) => {
               </div>
             </div>
             <p className="mt-2 text-xs md:text-sm text-gray-500">
-              Use test card: 4242 4242 4242 4242 with any future date and CVC
+              Use test card: 4242 4242 4242 4242 with any future date and CVC and any 5 digit zip code
             </p>
           </div>
 

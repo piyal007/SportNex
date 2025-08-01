@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ScaleLoader } from 'react-spinners';
 import { User, X, Search, RefreshCw } from 'lucide-react';
-import toast from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import Swal from 'sweetalert2';
 
@@ -40,11 +39,7 @@ const ManageMembers = () => {
     },
     enabled: !!user, // Only run when user is authenticated
     staleTime: 3 * 60 * 1000, // Data is fresh for 3 minutes
-    retry: 2,
-    onError: (error) => {
-      console.error('Error fetching members:', error);
-      toast.error('Failed to load members');
-    }
+    retry: 2
   });
 
   // TanStack Mutation for deleting members
@@ -60,9 +55,135 @@ const ManageMembers = () => {
       });
       
       if (!response.ok) {
-        throw new Error('Failed to delete member');
+        // Parse the error response to get detailed error information
+        let errorData;
+        try {
+          const responseText = await response.text();
+          
+          // Try to parse as JSON
+          if (responseText) {
+            errorData = JSON.parse(responseText);
+          } else {
+            errorData = { message: `HTTP ${response.status}: ${response.statusText}` };
+          }
+                 } catch {
+           // If response is not JSON, create error object with status info
+           errorData = { 
+             message: `Failed to delete member: ${response.status} ${response.statusText}`,
+             status: response.status 
+           };
+         }
+        
+        // Create a detailed error object
+        const error = new Error(errorData.message || 'Failed to delete member');
+        error.status = response.status;
+        error.details = errorData.details;
+        error.activeBookings = errorData.activeBookings;
+        error.errorData = errorData; // Keep full error data for debugging
+        throw error;
       }
       
+      const result = await response.json();
+      return memberId;
+      
+    },
+    onSuccess: (deletedMemberId) => {
+      // Update the cache optimistically
+      queryClient.setQueryData(['members'], (oldData) => {
+        return oldData ? oldData.filter(member => member._id !== deletedMemberId) : [];
+      });
+    },
+    onError: (error, variables) => {
+      // Show SweetAlert2 with exact reason message
+      let errorMessage = 'Failed to delete member';
+      
+      // Get the exact error message from the server response
+      if (error.errorData && error.errorData.details && error.errorData.details.error) {
+        // Use the detailed error message from the server
+        errorMessage = error.errorData.details.error;
+      } else if (error.errorData && error.errorData.error) {
+        // Fallback to the main error message
+        errorMessage = error.errorData.error;
+      } else if (error.errorData && error.errorData.message) {
+        // Another fallback
+        errorMessage = error.errorData.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      // Format the message to be more user-friendly
+      if (error.status === 400 && errorMessage.includes('Cannot delete member')) {
+        // Extract member name and booking count from the detailed error
+        const memberNameMatch = errorMessage.match(/Cannot delete member "([^"]+)"/);
+        const memberName = memberNameMatch ? memberNameMatch[1] : 'this member';
+        
+        // Extract booking count and status
+        const bookingMatch = errorMessage.match(/(\d+) active booking\(s\): (\d+) (\w+)/);
+        if (bookingMatch) {
+          const bookingCount = bookingMatch[1];
+          const status = bookingMatch[3];
+          errorMessage = `${memberName} can't delete because member have ${bookingCount} ${status} pending request${bookingCount === '1' ? '' : 's'}`;
+        } else {
+          // Fallback if pattern doesn't match
+          errorMessage = `${memberName} can't delete because member have pending requests`;
+        }
+      }
+      
+      Swal.fire({
+        title: 'Delete Failed',
+        text: errorMessage,
+        icon: 'error',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+        showDenyButton: true,
+        denyButtonText: 'Force Delete',
+        denyButtonColor: '#dc2626',
+        confirmButtonColor: '#10b981'
+      }).then((result) => {
+        if (result.isDenied) {
+          // Handle force delete
+          handleForceDelete(variables);
+        }
+        // If result.isDismissed or result.isCancelled, do nothing (user cancelled)
+      });
+    }
+  });
+
+  // TanStack Mutation for force deleting members
+  const forceDeleteMemberMutation = useMutation({
+    mutationFn: async (memberId) => {
+      const token = await user.getIdToken();
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/members/${memberId}/force`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        let errorData;
+        try {
+          const responseText = await response.text();
+          if (responseText) {
+            errorData = JSON.parse(responseText);
+          } else {
+            errorData = { message: `HTTP ${response.status}: ${response.statusText}` };
+          }
+        } catch {
+          errorData = { 
+            message: `Failed to force delete member: ${response.status} ${response.statusText}`,
+            status: response.status 
+          };
+        }
+        
+        const error = new Error(errorData.message || 'Failed to force delete member');
+        error.status = response.status;
+        error.errorData = errorData;
+        throw error;
+      }
+      
+      const result = await response.json();
       return memberId;
     },
     onSuccess: (deletedMemberId) => {
@@ -72,34 +193,45 @@ const ManageMembers = () => {
       });
       
       Swal.fire({
-        title: "Deleted!",
-        text: "Member has been deleted successfully.",
-        icon: "success"
+        title: 'Success!',
+        text: 'Member has been force deleted successfully',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#10b981'
       });
-      
-      toast.success('Member deleted successfully');
     },
     onError: (error) => {
-      console.error('Error deleting member:', error);
-      toast.error('Failed to delete member');
+      Swal.fire({
+        title: 'Force Delete Failed',
+        text: error.message || 'Failed to force delete member',
+        icon: 'error',
+        confirmButtonColor: '#10b981'
+      });
     }
   });
 
-  const handleDelete = async (memberId) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!"
-    });
-
-    if (result.isConfirmed) {
+          const handleDelete = async (memberId) => {
+      // Simple confirmation - just proceed with deletion
       deleteMemberMutation.mutate(memberId);
-    }
-  };
+    };
+
+    const handleForceDelete = async (memberId) => {
+      // Show confirmation for force delete
+      const result = await Swal.fire({
+        title: 'Force Delete Confirmation',
+        text: 'This will delete the member and all their associated data. This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Force Delete',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280'
+      });
+
+      if (result.isConfirmed) {
+        forceDeleteMemberMutation.mutate(memberId);
+      }
+    };
 
   // Filter members based on search term
   const members = membersData || [];
