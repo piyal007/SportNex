@@ -12,6 +12,7 @@ const Courts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState('card'); // 'card' or 'table'
+  const [sortOrder, setSortOrder] = useState('default'); // 'default' | 'priceAsc' | 'priceDesc'
   const { user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -125,11 +126,21 @@ const Courts = () => {
     refetch();
   };
 
-  // Pagination logic
-  const totalPages = Math.ceil(courts.length / courtsPerPage);
+  // Derived sort and pagination logic
+  const sortedCourts = (() => {
+    if (sortOrder === 'priceAsc') {
+      return [...courts].sort((a, b) => (a.pricePerSession || 0) - (b.pricePerSession || 0));
+    }
+    if (sortOrder === 'priceDesc') {
+      return [...courts].sort((a, b) => (b.pricePerSession || 0) - (a.pricePerSession || 0));
+    }
+    return courts;
+  })();
+
+  const totalPages = Math.ceil(sortedCourts.length / courtsPerPage);
   const startIndex = (currentPage - 1) * courtsPerPage;
   const endIndex = startIndex + courtsPerPage;
-  const currentCourts = courts.slice(startIndex, endIndex);
+  const currentCourts = sortedCourts.slice(startIndex, endIndex);
 
   const renderStars = (rating) => {
     const stars = [];
@@ -398,40 +409,57 @@ const Courts = () => {
           </p>
         </div>
 
-        {/* View Toggle and Refresh */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-4 md:mb-6 gap-4">
-          <div className="flex items-center gap-4">
+        {/* View Toggle, Refresh and Sorting */}
+        <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 md:mb-6 gap-3 md:gap-4">
+          {/* Left: count + refresh */}
+          <div className="flex items-center gap-3 flex-wrap w-full md:w-auto justify-between md:justify-start">
             <div className="text-xs md:text-sm text-gray-600">
-              {courts.length} courts available
+              {sortedCourts.length} courts available
             </div>
             <button
               onClick={handleRefresh}
               disabled={isLoading}
-              className="flex items-center gap-2 px-3 py-1 text-xs md:text-sm text-emerald-600 hover:text-emerald-700 cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-2 text-xs md:text-sm text-emerald-600 hover:text-emerald-700 cursor-pointer disabled:opacity-50"
             >
               <RefreshCw className={`w-3 h-3 md:w-4 md:h-4 ${isLoading ? 'animate-spin' : ''}`} />
               Refresh
             </button>
           </div>
-          <div className="flex space-x-2">
+          {/* Right: view toggle + sorting */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full md:w-auto">
             <button
               onClick={() => setViewMode('card')}
-              className={`px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-medium cursor-pointer transition-colors ${viewMode === 'card'
+              className={`w-full sm:w-auto px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-medium cursor-pointer transition-colors ${viewMode === 'card'
                 ? 'bg-emerald-600 text-white'
                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
+              aria-pressed={viewMode === 'card'}
             >
               Card View
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-medium cursor-pointer transition-colors ${viewMode === 'table'
+              className={`w-full sm:w-auto px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-medium cursor-pointer transition-colors ${viewMode === 'table'
                 ? 'bg-emerald-600 text-white'
                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
+              aria-pressed={viewMode === 'table'}
             >
               Table View
             </button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <label htmlFor="sort-price" className="hidden sm:block text-xs md:text-sm text-gray-600">Sort by:</label>
+              <select
+                id="sort-price"
+                value={sortOrder}
+                onChange={(e) => { setSortOrder(e.target.value); setCurrentPage(1); }}
+                className="w-full sm:w-48 px-2 py-2 rounded-md border border-gray-300 bg-white text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+              >
+                <option value="default">Default</option>
+                <option value="priceAsc">Price: Low to High</option>
+                <option value="priceDesc">Price: High to Low</option>
+              </select>
+            </div>
           </div>
         </div>
 
