@@ -4,6 +4,7 @@ import Error from "@/pages/error/Error";
 import Home from "@/pages/home/Home";
 import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
+import Pricing from "@/pages/pricing/Pricing";
 import Courts from "@/pages/courts/Courts";
 
 import PrivateRoute from "@/components/PrivateRoute";
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
             {
                 path: "/courts",
                 Component: Courts,
+            },
+            {
+                path: "/pricing",
+                Component: Pricing,
             },
             {
                 path: "/admin-setup",

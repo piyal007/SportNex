@@ -115,6 +115,17 @@ const Navbar = () => {
               >
                 Courts
               </NavLink>
+              <NavLink
+                to="/pricing"
+                className={({ isActive }) =>
+                  `px-2 lg:px-3 py-2 text-sm font-medium transition-colors ${isActive
+                    ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
+                    : 'text-foreground hover:text-emerald-600'
+                  }`
+                }
+              >
+                Pricing
+              </NavLink>
             </div>
           </div>
 
@@ -247,6 +258,18 @@ const Navbar = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Courts
+            </NavLink>
+            <NavLink
+              to="/pricing"
+              className={({ isActive }) =>
+                `block px-3 py-2 text-base font-medium transition-colors ${isActive
+                  ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
+                  : 'text-foreground hover:text-emerald-600 hover:bg-accent'
+                }`
+              }
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Pricing
             </NavLink>
 
             {/* Mobile Login/Profile Section */}
