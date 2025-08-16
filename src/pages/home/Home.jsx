@@ -6,6 +6,7 @@ import LocationSection from './components/LocationSection'
 import PromotionsSection from './components/PromotionsSection'
 import FeaturesSection from './components/FeaturesSection'
 import CTASection from './components/CTASection'
+import TestimonialsSection from './components/TestimonialsSection'
 
 const Home = () => {
   useTitle('Home')
@@ -30,6 +31,9 @@ const Home = () => {
 
       {/* Features Section */}
       <FeaturesSection />
+
+      {/* Testimonials */}
+      <TestimonialsSection />
 
       {/* CTA Section */}
       <CTASection />
