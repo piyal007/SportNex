@@ -5,8 +5,6 @@ A comprehensive, modern sports club management system built with React, Node.js,
 ## 🌐 Live Demo
 
 - **🌍 Live Site URL**: [https://assignment-12-piyal.web.app](https://assignment-12-piyal.web.app)
-- **👑 Admin Username**: `admin@gmail.com`
-- **🔐 Admin Password**: `Pass3ord@`
 
 ## ✨ Key Features (15+ Features)
 
