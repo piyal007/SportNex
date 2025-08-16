@@ -11,7 +11,7 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  const { user, logout, loading, userRole, isAdmin, isMemberOrAdmin } = useAuth()
+  const { user, logout, userRole } = useAuth()
   const { isBannerVisible } = useAdminSetupBanner()
   const navigate = useNavigate()
 
@@ -113,7 +113,18 @@ const Navbar = () => {
                   }`
                 }
               >
-                Courts
+                All Courts
+              </NavLink>
+              <NavLink
+                to="/categories"
+                className={({ isActive }) =>
+                  `px-2 lg:px-3 py-2 text-sm font-medium transition-colors ${isActive
+                    ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
+                    : 'text-foreground hover:text-emerald-600'
+                  }`
+                }
+              >
+                Categories
               </NavLink>
               <NavLink
                 to="/pricing"
@@ -257,7 +268,19 @@ const Navbar = () => {
               }
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Courts
+              All Courts
+            </NavLink>
+            <NavLink
+              to="/categories"
+              className={({ isActive }) =>
+                `block px-3 py-2 text-base font-medium transition-colors ${isActive
+                  ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 rounded-md'
+                  : 'text-foreground hover:text-emerald-600 hover:bg-accent'
+                }`
+              }
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Categories
             </NavLink>
             <NavLink
               to="/pricing"

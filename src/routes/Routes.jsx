@@ -6,6 +6,7 @@ import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 import Pricing from "@/pages/pricing/Pricing";
 import Courts from "@/pages/courts/Courts";
+import Categories from "@/pages/categories/Categories";
 
 import PrivateRoute from "@/components/PrivateRoute";
 import PublicRoute from "@/components/PublicRoute";
@@ -50,6 +51,14 @@ const router = createBrowserRouter([
             },
             {
                 path: "/courts",
+                Component: Courts,
+            },
+            {
+                path: "/categories",
+                Component: Categories,
+            },
+            {
+                path: "/categories/:type",
                 Component: Courts,
             },
             {

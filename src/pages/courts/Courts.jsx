@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Clock, MapPin, Users, Star, RefreshCw } from 'lucide-react';
+import { Clock, MapPin, Users, Star, RefreshCw, ArrowLeft } from 'lucide-react';
 import BookingModal from './components/BookingModal';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,6 +15,7 @@ const Courts = () => {
   const [sortOrder, setSortOrder] = useState('default'); // 'default' | 'priceAsc' | 'priceDesc'
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { type: categoryTypeParam } = useParams();
   const queryClient = useQueryClient();
 
   const courtsPerPage = viewMode === 'card' ? 6 : 10;
@@ -30,7 +31,7 @@ const Courts = () => {
     error,
     refetch
   } = useQuery({
-    queryKey: ['courts'],
+    queryKey: ['courts', categoryTypeParam || 'all'],
     queryFn: async () => {
       const response = await fetch(`${API_BASE_URL}/courts?limit=100`);
       const result = await response.json();
@@ -127,14 +128,19 @@ const Courts = () => {
   };
 
   // Derived sort and pagination logic
+  const normalizedFilter = categoryTypeParam ? String(categoryTypeParam).toLowerCase() : null;
+  const filteredCourts = normalizedFilter
+    ? courts.filter((c) => String(c.type).toLowerCase() === normalizedFilter)
+    : courts;
+
   const sortedCourts = (() => {
     if (sortOrder === 'priceAsc') {
-      return [...courts].sort((a, b) => (a.pricePerSession || 0) - (b.pricePerSession || 0));
+      return [...filteredCourts].sort((a, b) => (a.pricePerSession || 0) - (b.pricePerSession || 0));
     }
     if (sortOrder === 'priceDesc') {
-      return [...courts].sort((a, b) => (b.pricePerSession || 0) - (a.pricePerSession || 0));
+      return [...filteredCourts].sort((a, b) => (b.pricePerSession || 0) - (a.pricePerSession || 0));
     }
-    return courts;
+    return filteredCourts;
   })();
 
   const totalPages = Math.ceil(sortedCourts.length / courtsPerPage);
@@ -399,10 +405,21 @@ const Courts = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-4 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Back to Categories when filtered by category */}
+        {normalizedFilter && (
+          <div className="mb-3 md:mb-4">
+            <button
+              onClick={() => navigate('/categories')}
+              className="inline-flex items-center gap-2 text-sm md:text-base text-emerald-700 hover:text-emerald-800 cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back to Categories
+            </button>
+          </div>
+        )}
         {/* Header */}
         <div className="text-center mb-6 md:mb-8">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 md:mb-4">
-            Available Courts
+            {normalizedFilter ? `${categoryTypeParam} Courts` : 'Available Courts'}
           </h1>
           <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
             Book your favorite court and enjoy premium sports facilities
@@ -414,7 +431,7 @@ const Courts = () => {
           {/* Left: count + refresh */}
           <div className="flex items-center gap-3 flex-wrap w-full md:w-auto justify-between md:justify-start">
             <div className="text-xs md:text-sm text-gray-600">
-              {sortedCourts.length} courts available
+              {sortedCourts.length} {normalizedFilter ? `${categoryTypeParam} ` : ''}courts available
             </div>
             <button
               onClick={handleRefresh}
