@@ -99,6 +99,7 @@ const TestimonialsSection = () => {
         </div>
 
         <Swiper
+          className="testimonials-swiper"
           modules={[Autoplay, Pagination]}
           autoplay={{ delay: 3500, disableOnInteraction: false }}
           pagination={{ clickable: true }}
