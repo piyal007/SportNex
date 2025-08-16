@@ -40,13 +40,19 @@ const Categories = () => {
     return Array.from(typeToInfo.entries()).map(([type, info]) => ({ type, ...info }));
   }, [courts]);
 
+  // Local search
+  const [query, setQuery] = useState('');
+  const filteredCats = query
+    ? categories.filter((c) => String(c.type).toLowerCase().includes(query.trim().toLowerCase()))
+    : categories;
+
   // Pagination (9 per page)
   const [page, setPage] = useState(1);
   const pageSize = 9;
-  const totalPages = Math.ceil(categories.length / pageSize) || 1;
+  const totalPages = Math.ceil(filteredCats.length / pageSize) || 1;
   const start = (page - 1) * pageSize;
   const end = start + pageSize;
-  const pagedCategories = categories.slice(start, end);
+  const pagedCategories = filteredCats.slice(start, end);
 
   if (isLoading) {
     return (
@@ -84,8 +90,20 @@ const Categories = () => {
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">Browse by Categories</h1>
           <p className="mt-2 text-gray-600">Discover courts by sport type and find your next game.</p>
         </div>
+        {/* Search */}
+        <div className="mb-4 md:mb-6">
+          <div className="max-w-xl mx-auto">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => { setQuery(e.target.value); setPage(1); }}
+              placeholder="Search categories..."
+              className="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-sm md:text-base focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+            />
+          </div>
+        </div>
 
-        {categories.length === 0 ? (
+        {filteredCats.length === 0 ? (
           <div className="text-center py-16">
             <div className="bg-white rounded-xl border border-gray-200 p-8">
               <p className="text-gray-700">No categories available right now.</p>
@@ -126,7 +144,7 @@ const Categories = () => {
           {/* Pagination */}
           <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-3">
             <div className="text-xs md:text-sm text-gray-700">
-              Showing {start + 1} to {Math.min(end, categories.length)} of {categories.length} categories
+              Showing {start + 1} to {Math.min(end, filteredCats.length)} of {filteredCats.length} categories
             </div>
             <div className="flex items-center gap-1">
               <button

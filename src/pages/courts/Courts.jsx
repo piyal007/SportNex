@@ -12,6 +12,7 @@ const Courts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState('card'); // 'card' or 'table'
+  const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('default'); // 'default' | 'priceAsc' | 'priceDesc'
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -129,9 +130,17 @@ const Courts = () => {
 
   // Derived sort and pagination logic
   const normalizedFilter = categoryTypeParam ? String(categoryTypeParam).toLowerCase() : null;
-  const filteredCourts = normalizedFilter
+  const filteredByCategory = normalizedFilter
     ? courts.filter((c) => String(c.type).toLowerCase() === normalizedFilter)
     : courts;
+  const search = searchTerm.trim().toLowerCase();
+  const filteredCourts = search
+    ? filteredByCategory.filter((c) =>
+        String(c.name || '').toLowerCase().includes(search) ||
+        String(c.type || '').toLowerCase().includes(search) ||
+        String(c.location || '').toLowerCase().includes(search)
+      )
+    : filteredByCategory;
 
   const sortedCourts = (() => {
     if (sortOrder === 'priceAsc') {
@@ -338,7 +347,7 @@ const Courts = () => {
   const renderPagination = () => (
     <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4">
       <div className="text-xs md:text-sm text-gray-700">
-        Showing {startIndex + 1} to {Math.min(endIndex, courts.length)} of {courts.length} courts
+        Showing {startIndex + 1} to {Math.min(endIndex, sortedCourts.length)} of {sortedCourts.length} courts
       </div>
       <div className="flex space-x-1 md:space-x-2">
         <button
@@ -426,12 +435,21 @@ const Courts = () => {
           </p>
         </div>
 
-        {/* View Toggle, Refresh and Sorting */}
+        {/* Controls: count/search/refresh on left, view/sort on right */}
         <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 md:mb-6 gap-3 md:gap-4">
-          {/* Left: count + refresh */}
+          {/* Left: count + search + refresh */}
           <div className="flex items-center gap-3 flex-wrap w-full md:w-auto justify-between md:justify-start">
             <div className="text-xs md:text-sm text-gray-600">
               {sortedCourts.length} {normalizedFilter ? `${categoryTypeParam} ` : ''}courts available
+            </div>
+            <div className="flex-1 min-w-[200px] sm:min-w-[260px] md:min-w-[320px] max-w-xl">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                placeholder="Search by name, type or location"
+                className="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+              />
             </div>
             <button
               onClick={handleRefresh}
