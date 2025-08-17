@@ -7,6 +7,7 @@ import Register from "@/pages/auth/Register";
 import Pricing from "@/pages/pricing/Pricing";
 import Courts from "@/pages/courts/Courts";
 import Categories from "@/pages/categories/Categories";
+import Contact from "@/pages/contact/Contact";
 
 import PrivateRoute from "@/components/PrivateRoute";
 import PublicRoute from "@/components/PublicRoute";
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
             {
                 path: "/pricing",
                 Component: Pricing,
+            },
+            {
+                path: "/contact",
+                Component: Contact,
             },
             {
                 path: "/admin-setup",
