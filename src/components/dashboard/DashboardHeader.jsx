@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
   Bell,
   User,
   Settings,
-  ChevronDown
+  ChevronDown,
+  LogOut
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -13,6 +14,7 @@ const DashboardHeader = () => {
   const { user, userRole, logout } = useAuth();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const handleLogout = async () => {
     try {
@@ -27,6 +29,25 @@ const DashboardHeader = () => {
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
+  // Close dropdown on outside click or Escape key
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+    const handleClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    const handleKey = (e) => {
+      if (e.key === 'Escape') setIsDropdownOpen(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [isDropdownOpen]);
 
   return (
     <header className="fixed top-0 right-0 left-0 lg:left-64 bg-white border-b border-gray-200 px-4 lg:px-8 py-4 z-30">
@@ -55,7 +76,7 @@ const DashboardHeader = () => {
           </button>
 
           {/* User Dropdown */}
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <button
               onClick={toggleDropdown}
               className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
@@ -102,7 +123,8 @@ const DashboardHeader = () => {
                   <button
                     onClick={() => {
                       setIsDropdownOpen(false);
-                      navigate('/dashboard');
+                      const target = userRole === 'admin' ? '/admin-dashboard/profile' : '/dashboard/profile';
+                      navigate(target);
                     }}
                     className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
                   >
@@ -113,15 +135,13 @@ const DashboardHeader = () => {
                   <button
                     onClick={() => {
                       setIsDropdownOpen(false);
-                      // Settings functionality can be added later
+                      handleLogout();
                     }}
-                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                    className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
                   >
-                    <Settings className="w-4 h-4 mr-3" />
-                    Settings
+                    <LogOut className="w-4 h-4 mr-3" />
+                    Logout
                   </button>
-
-
                 </div>
               </div>
             )}

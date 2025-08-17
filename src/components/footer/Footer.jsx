@@ -1,5 +1,6 @@
 import React from 'react'
 import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const Footer = () => {
   return (
@@ -41,29 +42,37 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-white">Follow Us</h4>
             <div className="flex space-x-4">
-              <a 
-                href="#" 
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 bg-gray-800 rounded-lg hover:bg-emerald-600 transition-colors duration-300 cursor-pointer"
                 aria-label="Facebook"
               >
                 <Facebook className="h-5 w-5" />
               </a>
-              <a 
-                href="#" 
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 bg-gray-800 rounded-lg hover:bg-emerald-600 transition-colors duration-300 cursor-pointer"
                 aria-label="Twitter"
               >
                 <Twitter className="h-5 w-5" />
               </a>
-              <a 
-                href="#" 
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 bg-gray-800 rounded-lg hover:bg-emerald-600 transition-colors duration-300 cursor-pointer"
                 aria-label="Instagram"
               >
                 <Instagram className="h-5 w-5" />
               </a>
-              <a 
-                href="#" 
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 bg-gray-800 rounded-lg hover:bg-emerald-600 transition-colors duration-300 cursor-pointer"
                 aria-label="YouTube"
               >
@@ -83,12 +92,12 @@ const Footer = () => {
               © {new Date().getFullYear()} SportNex. All rights reserved.
             </p>
             <div className="flex space-x-6">
-              <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors text-sm cursor-pointer">
+              <Link to="/privacy" className="text-gray-400 hover:text-emerald-400 transition-colors text-sm cursor-pointer">
                 Privacy Policy
-              </a>
-              <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors text-sm cursor-pointer">
+              </Link>
+              <Link to="/terms" className="text-gray-400 hover:text-emerald-400 transition-colors text-sm cursor-pointer">
                 Terms of Service
-              </a>
+              </Link>
             </div>
           </div>
         </div>

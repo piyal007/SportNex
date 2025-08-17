@@ -3,15 +3,19 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   User,
+  Users,
+  UserCog,
   Menu,
   X,
   Home,
-  LogOut,
+  LayoutDashboard,
   Calendar,
   Megaphone,
   CheckCircle,
   CalendarCheck,
-  Receipt
+  Receipt,
+  Building2,
+  TicketPercent
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -129,7 +133,7 @@ const DashboardSidebar = () => {
                 `}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <Home className="w-5 h-5 mr-3" />
+                <LayoutDashboard className="w-5 h-5 mr-3" />
                 <span className="font-medium">Overview</span>
               </NavLink>
             </li>
@@ -137,7 +141,7 @@ const DashboardSidebar = () => {
             {/* Profile Button */}
             <li>
               <NavLink
-                to={userRole === 'admin' ? '/admin-dashboard' : '/dashboard/profile'}
+                to={userRole === 'admin' ? '/admin-dashboard/profile' : '/dashboard/profile'}
                 end={true}
                 className={({ isActive }) => `
                   flex items-center px-4 py-3 rounded-lg transition-colors cursor-pointer
@@ -184,7 +188,7 @@ const DashboardSidebar = () => {
                     `}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <User className="w-5 h-5 mr-3" />
+                    <Users className="w-5 h-5 mr-3" />
                     <span className="font-medium">Manage Members</span>
                   </NavLink>
                 </li>
@@ -200,7 +204,7 @@ const DashboardSidebar = () => {
                     `}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <User className="w-5 h-5 mr-3" />
+                    <UserCog className="w-5 h-5 mr-3" />
                     <span className="font-medium">All Users</span>
                   </NavLink>
                 </li>
@@ -216,7 +220,7 @@ const DashboardSidebar = () => {
                     `}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <CalendarCheck className="w-5 h-5 mr-3" />
+                    <Building2 className="w-5 h-5 mr-3" />
                     <span className="font-medium">Manage Courts</span>
                   </NavLink>
                 </li>
@@ -248,7 +252,7 @@ const DashboardSidebar = () => {
                     `}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <Megaphone className="w-5 h-5 mr-3" />
+                    <TicketPercent className="w-5 h-5 mr-3" />
                     <span className="font-medium">Manage Coupons</span>
                   </NavLink>
                 </li>
@@ -357,19 +361,7 @@ const DashboardSidebar = () => {
               </>
             )}
 
-            {/* Logout Button */}
-            <li>
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsMobileMenuOpen(false);
-                }}
-                className="flex items-center w-full px-4 py-3 rounded-lg transition-colors cursor-pointer text-red-600 hover:bg-red-50 hover:text-red-700"
-              >
-                <LogOut className="w-5 h-5 mr-3" />
-                <span className="font-medium">Logout</span>
-              </button>
-            </li>
+            {/* Logout removed; available in header dropdown */}
           </ul>
         </nav>
 

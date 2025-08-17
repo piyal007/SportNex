@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const FancyBanner = () => {
@@ -92,9 +93,12 @@ const FancyBanner = () => {
                 <p className="text-lg md:text-xl text-gray-200 mb-6">
                   {slide.subtitle}
                 </p>
-                <button className="bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-300 cursor-pointer">
+                <Link
+                  to="/courts"
+                  className="inline-block bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-300 cursor-pointer"
+                >
                   Explore Now
-                </button>
+                </Link>
               </div>
             </div>
           </div>

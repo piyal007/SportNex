@@ -171,10 +171,13 @@ const PromotionsSection = () => {
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
               Choose any coupon code above and apply it during checkout to enjoy instant savings on your membership!
             </p>
-            <button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 cursor-pointer transform hover:scale-105">
-              <Gift className="h-5 w-5 mr-2 inline" />
+            <a
+              href="/pricing"
+              className="inline-flex items-center bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+            >
+              <Gift className="h-5 w-5 mr-2" />
               Start Your Membership
-            </button>
+            </a>
           </div>
         </div>
       </div>

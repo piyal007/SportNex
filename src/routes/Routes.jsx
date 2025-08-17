@@ -32,6 +32,8 @@ import ConfirmedBookings from "@/pages/dashboard/ConfirmedBookings";
 import PaymentHistory from "@/pages/dashboard/PaymentHistory";
 import Overview from "@/pages/dashboard/Overview";
 import AdminOverview from "@/pages/dashboard/AdminOverview";
+import Privacy from "@/pages/legal/Privacy";
+import Terms from "@/pages/legal/Terms";
 
 
 const router = createBrowserRouter([
@@ -76,6 +78,14 @@ const router = createBrowserRouter([
                 path: "/admin-setup",
                 element: <AdminSetup />,
             },
+            {
+                path: "/privacy",
+                Component: Privacy,
+            },
+            {
+                path: "/terms",
+                Component: Terms,
+            },
         ]
     },
     {
@@ -101,6 +111,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <AdminOverview /> },
           { path: "overview", element: <AdminOverview /> },
+          { path: "profile", element: <Profile /> },
           { path: "manage-bookings", element: <ManageBookings /> },
           { path: "manage-members", element: <ManageMembers /> },
           { path: "all-users", element: <AllUsers /> },

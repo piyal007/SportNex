@@ -1,5 +1,6 @@
 import React from 'react'
 import { Calendar, Users, Trophy } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const FeaturesSection = () => {
   return (
@@ -23,6 +24,9 @@ const FeaturesSection = () => {
             <p className="text-muted-foreground">
               Book your favorite courts in just a few clicks. Simple, fast, and reliable.
             </p>
+            <div className="mt-4">
+              <Link to="/courts" className="text-emerald-600 hover:underline font-medium">Browse Courts →</Link>
+            </div>
           </div>
           
           <div className="text-center p-6 rounded-lg border border-border hover:border-emerald-200 dark:hover:border-emerald-700 transition-colors bg-card">
@@ -33,6 +37,9 @@ const FeaturesSection = () => {
             <p className="text-muted-foreground">
               Connect with fellow athletes and build lasting friendships through sports.
             </p>
+            <div className="mt-4">
+              <Link to="/register" className="text-emerald-600 hover:underline font-medium">Join Now →</Link>
+            </div>
           </div>
           
           <div className="text-center p-6 rounded-lg border border-border hover:border-emerald-200 dark:hover:border-emerald-700 transition-colors bg-card">
@@ -43,6 +50,9 @@ const FeaturesSection = () => {
             <p className="text-muted-foreground">
               Access to high-quality courts with professional-grade equipment and facilities.
             </p>
+            <div className="mt-4">
+              <Link to="/pricing" className="text-emerald-600 hover:underline font-medium">See Pricing →</Link>
+            </div>
           </div>
         </div>
       </div>

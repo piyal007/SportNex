@@ -94,6 +94,10 @@ export const bookingsAPI = {
   deleteBooking: (id) => api.delete(`/api/bookings/${id}`),
   approveBooking: (id) => api.patch(`/api/bookings/${id}/approve`),
   rejectBooking: (id) => api.patch(`/api/bookings/${id}/reject`),
+  // User-specific booking lists
+  getPendingByUid: (firebaseUid) => api.get(`/api/bookings/pending/${firebaseUid}`),
+  getApprovedByUid: (firebaseUid) => api.get(`/api/bookings/approved/${firebaseUid}`),
+  getConfirmedByUid: (firebaseUid) => api.get(`/api/bookings/confirmed/${firebaseUid}`),
 };
 
 // Announcements API (to be implemented)

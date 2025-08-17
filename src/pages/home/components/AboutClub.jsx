@@ -137,9 +137,12 @@ const AboutClub = () => {
             <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
               Experience the SportNex difference and become part of a community that's passionate about sports excellence.
             </p>
-            <button className="bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-800 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-300 cursor-pointer">
+            <a
+              href="/register"
+              className="inline-block bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-800 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-300 cursor-pointer"
+            >
               Become a Member
-            </button>
+            </a>
           </div>
         </div>
       </div>
