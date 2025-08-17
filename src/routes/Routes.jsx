@@ -30,6 +30,8 @@ import ManageCoupons from "@/pages/dashboard/ManageCoupons";
 import Payment from "@/pages/dashboard/Payment";
 import ConfirmedBookings from "@/pages/dashboard/ConfirmedBookings";
 import PaymentHistory from "@/pages/dashboard/PaymentHistory";
+import Overview from "@/pages/dashboard/Overview";
+import AdminOverview from "@/pages/dashboard/AdminOverview";
 
 
 const router = createBrowserRouter([
@@ -81,7 +83,8 @@ const router = createBrowserRouter([
         element: <UserRoute><Dashboard /></UserRoute>,
         errorElement: <Error />,
         children: [
-          { index: true, element: <Profile /> },
+          { index: true, element: <Overview /> },
+          { path: "overview", element: <Overview /> },
           { path: "profile", element: <Profile /> },
           { path: "pending-bookings", element: <PendingBookings /> },
           { path: "approved-bookings", element: <ApprovedBookings /> },
@@ -96,7 +99,8 @@ const router = createBrowserRouter([
         element: <AdminRoute><AdminDashboard /></AdminRoute>,
         errorElement: <Error />,
         children: [
-          { index: true, element: <AdminDashboardHome /> },
+          { index: true, element: <AdminOverview /> },
+          { path: "overview", element: <AdminOverview /> },
           { path: "manage-bookings", element: <ManageBookings /> },
           { path: "manage-members", element: <ManageMembers /> },
           { path: "all-users", element: <AllUsers /> },

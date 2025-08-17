@@ -109,7 +109,10 @@ export const paymentsAPI = {
   createPaymentIntent: (amount, currency = 'usd') =>
     api.post('/api/payments/create-intent', { amount, currency }),
   confirmPayment: (paymentData) => api.post('/api/payments/confirm', paymentData),
-  getPaymentHistory: (params = {}) => api.get('/api/payments', { params }),
+  // Current user's payment history (member or admin only)
+  getPaymentHistory: (params = {}) => api.get('/api/payments/history', { params }),
+  // Admin: all payments overview
+  getAdminPayments: (params = {}) => api.get('/api/payments/admin', { params }),
 };
 
 // Coupons API (to be implemented)
